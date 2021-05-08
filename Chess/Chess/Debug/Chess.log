@@ -1,4 +1,4 @@
-﻿  Bishop.cpp
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Bishop.cpp(83,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Bishop.cpp(83,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+﻿  Queen.cpp
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Queen.cpp(153,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Queen.cpp(153,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
   Chess.vcxproj -> \\Mac\Home\Desktop\ChessGame\Chess\Debug\Chess.exe
