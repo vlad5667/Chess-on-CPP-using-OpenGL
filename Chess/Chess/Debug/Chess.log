@@ -1,4 +1,4 @@
-﻿  Rook.cpp
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Rook.cpp(88,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Rook.cpp(88,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+﻿  Knight.cpp
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Knight.cpp(26,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Knight.cpp(26,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
   Chess.vcxproj -> \\Mac\Home\Desktop\ChessGame\Chess\Debug\Chess.exe
