@@ -372,7 +372,7 @@ namespace ChessGame {
 								}
 							}
 							else if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
-								if (pieces[28]->isCheckOccured(pieces, fields)) {
+								if (pieces[28]->isCheckOccured(pieces, fields) != -1) {
 									p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 								}
 								else {
@@ -397,7 +397,7 @@ namespace ChessGame {
 								}
 							}
 							else if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
-								if (pieces[4]->isCheckOccured(pieces, fields)) {
+								if (pieces[4]->isCheckOccured(pieces, fields) != -1) {
 									p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 								}
 								else {
@@ -443,16 +443,19 @@ namespace ChessGame {
 								p->movePieceToPosition(fields, zStart, xStart, currentZ, currentX);
 							}
 							else if (castlingOccured || hit) {
+								checkB = pieces[4]->isCheckOccured(pieces, fields);
+								checkW = pieces[28]->isCheckOccured(pieces, fields);
 								whiteMove = !whiteMove;
+								std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 							}
 							collision = false;
 						}
 						else { // Перевірка коректності переміщення
 							if ((p->getColor() == 'W' && whiteMove) || (p->getColor() == 'B' && !whiteMove)) {
 								if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
-									whiteMove = !whiteMove;
 									checkB = pieces[4]->isCheckOccured(pieces, fields);
 									checkW = pieces[28]->isCheckOccured(pieces, fields);
+									whiteMove = !whiteMove;
 									std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 								}
 							}
