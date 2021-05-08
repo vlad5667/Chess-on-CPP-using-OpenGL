@@ -455,7 +455,17 @@ namespace ChessGame {
 								if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									checkB = pieces[4]->isCheckOccured(pieces, fields);
 									checkW = pieces[28]->isCheckOccured(pieces, fields);
-									whiteMove = !whiteMove;
+									if (checkB != -1 && p->getColor() == 'B' && typeid(*p) == typeid(King)) {
+										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
+										checkB = -1;
+									}
+									else if (checkW != -1 && p->getColor() == 'W' && typeid(*p) == typeid(King)) {
+										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
+										checkW = -1;
+									}
+									else {
+										whiteMove = !whiteMove;
+									}
 									std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 								}
 							}
