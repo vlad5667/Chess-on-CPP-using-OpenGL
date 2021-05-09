@@ -81,6 +81,9 @@ namespace ChessGame {
 	}
 	int Bishop::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (this->getId() != fields[currentZ][currentX]) {
+			return 0;
+		}
 		for (int z = currentZ + 1, x = currentX + 1; z < 8 && x < 8; z++, x++) {
 			if (fields[z][x] != -1) {
 				Piece* p = pieces[fields[z][x]];

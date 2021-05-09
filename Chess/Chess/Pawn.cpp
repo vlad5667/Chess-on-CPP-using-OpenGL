@@ -63,6 +63,9 @@ namespace ChessGame {
 	}
 	int Pawn::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (this->getId() != fields[currentZ][currentX]) {
+			return 0;
+		}
 		if (currentZ >= 1 && currentX >= 1 && currentZ <= 6 && currentX <= 6) {
 			if (getColor() == 'W') {
 				if (fields[currentZ - 1][currentX + 1] != -1) {

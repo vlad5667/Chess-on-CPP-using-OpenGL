@@ -69,4 +69,13 @@ namespace ChessGame {
 		}
 		return -1;
 	}
+	bool King::isMateOccured(Piece* pieces[32], int(&fields)[8][8]) {
+		/*int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		int noCheckCells = 0, k = fields[currentZ][currentX];
+		if (fields[currentZ][currentX] == -1) {
+			fields[currentZ + 1][currentX] = fields[currentZ][currentX];
+			if (isCheckOccured)
+		}*/
+		return false;
+	}
 }

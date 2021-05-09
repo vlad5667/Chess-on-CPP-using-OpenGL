@@ -86,6 +86,9 @@ namespace ChessGame {
 	}
 	int Rook::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (this->getId() != fields[currentZ][currentX]) {
+			return 0;
+		}
 		for (int z = currentZ - 1; z >= 0; z--) {
 			if (fields[z][currentX] != -1) {
 				Piece* p = pieces[fields[z][currentX]];

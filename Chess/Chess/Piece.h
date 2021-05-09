@@ -8,22 +8,25 @@
 namespace ChessGame {
 	class Piece : public Shape {
 	private:
+		int id;
 		char color;
 		float radius;
 		GLuint texture;
 		bool firstMove = true;
 	public:
-		Piece(char color, float xCenter, float yCenter, float zCenter,
+		Piece(int id, char color, float xCenter, float yCenter, float zCenter,
 			float xSize, float ySize, float zSize,
 			float* diffColor, float* ambiColor, float* specColor, float shininess, float radius, GLuint texture, bool firstMove = true)
 			: Shape(xCenter, yCenter, zCenter,
 				xSize, ySize, zSize,
 				specColor, diffColor, ambiColor, shininess) {
+			this->id = id;
 			this->color = color;
 			this->radius = radius;
 			this->texture = texture;
 		}
 
+		int getId() { return id; }
 		void setColor(char color) { this->color = color; }
 		char getColor() { return color; }
 		float getRadius() { return radius; }

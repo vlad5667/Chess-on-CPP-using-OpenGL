@@ -65,51 +65,51 @@ namespace ChessGame {
 				if (i <= -2 || i >= 3) {
 					if (i == -2) {
 						texture = loadTexture("textures/b_p.png");
-						shapes.push_back(pieces[k] = new Pawn('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Pawn(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 3) {
 						texture = loadTexture("textures/w_p.png");
-						shapes.push_back(pieces[k] = new Pawn('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Pawn(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					else if (i == -3 && (j == -3 || j == 4)) {
 						texture = loadTexture("textures/b_r.png");
-						shapes.push_back(pieces[k] = new Rook('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Rook(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 4 && (j == -3 || j == 4)) {
 						texture = loadTexture("textures/w_r.png");
-						shapes.push_back(pieces[k] = new Rook('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Rook(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					else if (i == -3 && (j == -2 || j == 3)) {
 						texture = loadTexture("textures/b_kn.png");
-						shapes.push_back(pieces[k] = new Knight('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Knight(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 4 && (j == -2 || j == 3)) {
 						texture = loadTexture("textures/w_kn.png");
-						shapes.push_back(pieces[k] = new Knight('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Knight(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					else if (i == -3 && (j == -1 || j == 2)) {
 						texture = loadTexture("textures/b_b.png");
-						shapes.push_back(pieces[k] = new Bishop('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Bishop(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 4 && (j == -1 || j == 2)) {
 						texture = loadTexture("textures/w_b.png");
-						shapes.push_back(pieces[k] = new Bishop('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Bishop(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					else if (i == -3 && j == 0) {
 						texture = loadTexture("textures/b_q.png");
-						shapes.push_back(pieces[k] = new Queen('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Queen(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 4 && j == 0) {
 						texture = loadTexture("textures/w_q.png");
-						shapes.push_back(pieces[k] = new Queen('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Queen(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					else if (i == -3 && j == 1) {
 						texture = loadTexture("textures/b_k.png");
-						shapes.push_back(pieces[k] = new King('B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new King(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
 					}
 					else if (i == 4 && j == 1) {
 						texture = loadTexture("textures/w_k.png");
-						shapes.push_back(pieces[k] = new King('W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new King(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
 					}
 					k++;
 				}
@@ -339,6 +339,7 @@ namespace ChessGame {
 			// ¬≥джата кнопка була л≥вою
 			if (button == 0) {
 				//TODO сделать нормальную рокировку, то есть учесть все услови€ (если на линии рокировки есть клетка, котора€ бьЄтс€ вражеской фигурой, то рокировка не возможна)
+				//TODO если король бьЄт фигуру, провер€ть чтобы он не попадал при этом под новый шах
 				//std::cout << zStart << " " << currentZ << " " << xStart << " " << currentX << " " << mouseZCell << " " << mouseXCell  << "\n";
 				downAllPieces();
 				findNearest(x, y, mouseXCell, mouseZCell);
@@ -347,8 +348,8 @@ namespace ChessGame {
 				bool castlingOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ рок≥руванн€ чи н≥
 				// якщо ф≥гура намагаЇтьс€ перем≥ститис€ за меж≥ дошки, повертаЇмо њњ обратно
 				if (mouseXCell == -1 || mouseZCell == -1) {
-					std::cout << "mouseXCell " << mouseXCell << " mouseZCell " << mouseZCell << "\n";
-					std::cout << "xStart " << xStart << " zStart " << zStart << " currentX " << currentX << " currentZ " << currentZ << "\n";
+					//std::cout << "mouseXCell " << mouseXCell << " mouseZCell " << mouseZCell << "\n";
+					//std::cout << "xStart " << xStart << " zStart " << zStart << " currentX " << currentX << " currentZ " << currentZ << "\n";
 					if (zStart != -1 && xStart != -1 && currentZ != -1 && currentX != -1 && pieces[fields[currentZ][currentX]] == p) {
 						p->movePieceToPosition(fields, zStart, xStart, currentZ, currentX);
 					}
@@ -362,17 +363,19 @@ namespace ChessGame {
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 							if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
 								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
-									// якщо ф≥гура намагаЇтьс€ нанести удар по ф≥гур≥, що спричинила шах, то проводимо удар ≥ зв≥льнюЇмос€ в≥д шаху
-									if (pieces[checkW] == pieces[fields[mouseZCell][mouseXCell]]) {
+									int k = fields[mouseZCell][mouseXCell];
+									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
+									fields[currentZ][currentX] = -1;
+									// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
+									checkW = pieces[28]->isCheckOccured(pieces, fields);
+									fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
+									fields[mouseZCell][mouseXCell] = k;
+									// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
+									if (checkW == -1) {
 										pieces[fields[mouseZCell][mouseXCell]]->setXCenter(-5 - delW++);
 										pieces[fields[mouseZCell][mouseXCell]]->setZCenter(4);
 										p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
-										checkW = -1;
 										whiteMove = !whiteMove;
-									}
-									// якщо ф≥гура намагаЇтьс€ забрати ф≥гуру, що не спричинала шах, то цей удар неможливий, тому в≥н скасовуЇтьс€
-									else {
-										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 									}
 								}
 							}
@@ -391,19 +394,24 @@ namespace ChessGame {
 						}
 						// якщо чорним оголошено шах ≥ зараз х≥д чорних
 						else if (checkB != -1 && !whiteMove) {
+							//TODO помен€ть возврат isCHeckOccured обратно на bool. » кста проделать такую же проверку двойного шаха с белыми фигурами.
+							// ≈щЄ сделать коммит после этого на гит.
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 							if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
 								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
-									// якщо ф≥гура намагаЇтьс€ нанести удар по ф≥гур≥, що спричинила шах, то проводимо удар ≥ зв≥льнюЇмос€ в≥д шаху
-									if (pieces[checkB] == pieces[fields[mouseZCell][mouseXCell]]) {
+									int k = fields[mouseZCell][mouseXCell];
+									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
+									fields[currentZ][currentX] = -1;
+									// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
+									checkB = pieces[4]->isCheckOccured(pieces, fields);
+									fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
+									fields[mouseZCell][mouseXCell] = k;
+									// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
+									if (checkB == -1) {
 										pieces[fields[mouseZCell][mouseXCell]]->setXCenter(6 + delB++);
 										pieces[fields[mouseZCell][mouseXCell]]->setZCenter(-3);
 										p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
-										checkB = -1;
 										whiteMove = !whiteMove;
-									}
-									else {
-										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 									}
 								}
 							}
@@ -473,7 +481,7 @@ namespace ChessGame {
 						else { // ѕерев≥рка коректност≥ перем≥щенн€
 							if ((p->getColor() == 'W' && whiteMove) || (p->getColor() == 'B' && !whiteMove)) {
 								if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
-									// ѕерев≥рка шахуй дл€ обох королей
+									// ѕерев≥рка на шах дл€ обох королей
 									checkB = pieces[4]->isCheckOccured(pieces, fields);
 									checkW = pieces[28]->isCheckOccured(pieces, fields);
 									// якщо король робить х≥д, €кий призведе до шаху, повертаЇмо його назад
