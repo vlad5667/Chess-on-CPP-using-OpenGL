@@ -119,10 +119,10 @@ namespace ChessGame {
 	}
 	bool Pawn::isPromotionOccured(int mouseZCell, int mouseXCell) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (currentZ - mouseZCell == 1 && abs(currentX - mouseXCell) <= 1 && mouseZCell == 0) {
+		if (currentZ - mouseZCell <= 1 && abs(currentX - mouseXCell) <= 1 && mouseZCell == 0) {
 			return true;
 		}
-		else if (mouseZCell - currentZ == 1 && abs(currentX - mouseXCell) <= 1 && mouseZCell == 7) {
+		else if (mouseZCell - currentZ <= 1 && abs(currentX - mouseXCell) <= 1 && mouseZCell == 7) {
 			return true;
 		}
 		return false;

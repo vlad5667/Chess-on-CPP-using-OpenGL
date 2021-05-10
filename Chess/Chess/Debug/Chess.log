@@ -1,83 +1,10 @@
-﻿  Scene.cpp
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(29,39): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(29,33): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(32,90): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(32,39): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(32,33): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(37,39): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(37,33): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(40,90): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(40,39): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(40,33): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(50,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(50,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(50,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(54,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(54,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(54,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(58,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(58,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(58,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(62,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(62,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(62,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(66,122): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(66,63): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(66,55): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(70,122): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(70,63): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(70,55): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(74,122): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(74,63): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(74,55): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(78,122): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(78,63): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(78,55): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(82,121): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(82,62): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(82,54): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(86,121): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(86,62): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(86,54): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(90,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(90,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(90,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(94,120): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(94,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(94,53): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(116,41): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(116,44): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(116,29): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(188,29): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(249,105): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(253,106): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(257,106): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(261,104): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(270,105): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(274,106): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(278,106): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(282,104): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(317,27): warning C4244: аргумент: преобразование "float" в "GLsizei", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(317,20): warning C4244: аргумент: преобразование "float" в "GLsizei", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(345,81): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(346,67): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(347,70): warning C4305: аргумент: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(363,30): warning C4305: аргумент: усечение из "double" в "GLfloat"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(376,21): warning C4018: <: несоответствие типов со знаком и без знака
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(246,12): warning C4101: texture: неиспользованная локальная переменная
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(267,12): warning C4101: texture: неиспользованная локальная переменная
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(390,17): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(393,18): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(399,12): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(400,12): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(435,43): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(439,44): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(461,65): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(498,64): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(547,66): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(581,65): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(669,13): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(670,13): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(681,16): warning C4305: +=: усечение из "double" в "float"
-\\Mac\Home\Desktop\ChessGame\Chess\Chess\Scene.cpp(687,16): warning C4305: -=: усечение из "double" в "float"
+﻿  Pawn.cpp
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(65,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(65,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(102,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(102,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(103,18): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(103,70): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(121,16): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+\\Mac\Home\Desktop\ChessGame\Chess\Chess\Pawn.cpp(121,51): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
   Chess.vcxproj -> \\Mac\Home\Desktop\ChessGame\Chess\Debug\Chess.exe
