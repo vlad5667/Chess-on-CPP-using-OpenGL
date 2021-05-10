@@ -14,8 +14,9 @@ namespace ChessGame {
 				diffColor, ambiColor, specColor, shininess, radius, texture) { }
 
 		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
-		virtual bool Pawn::isHitPossible(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) override;
+		virtual bool Pawn::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
+		bool isEnPassantOccured(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
 	};
 }
 

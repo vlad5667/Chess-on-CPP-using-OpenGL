@@ -42,7 +42,7 @@ namespace ChessGame {
 			return false;
 		}
 	}
-	bool Bishop::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) {
+	bool Bishop::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		if (abs(zStart - mouseZCell) == abs(xStart - mouseXCell)) {
 			if (mouseXCell < xStart && mouseZCell < zStart) {
 				for (int x = xStart - 1, z = zStart - 1; x > mouseXCell && z > mouseZCell; x--, z--) {
