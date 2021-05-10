@@ -23,7 +23,7 @@ namespace ChessGame {
 		return false;
 	}
 	// Убрать pieces из проверки на шах, и реализовать всё через fields, а потом моделировать удар в массиве fields, не трогая при этом сами фигуры.
-	int Knight::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
+	int Knight::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		if (this->getId() != fields[currentZ][currentX]) {
 			return 0;

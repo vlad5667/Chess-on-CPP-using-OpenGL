@@ -15,7 +15,7 @@ namespace ChessGame {
 
 		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) override;
-		virtual int isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
 	};
 }
 

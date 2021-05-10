@@ -360,14 +360,17 @@ namespace ChessGame {
 					if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
 						// якщо б≥лим оголошено шах ≥ зараз њх х≥д
 						if (checkW != -1 && whiteMove) {
+							if (static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
+								std::cout << "MATE!!!!!!\n";
+							}
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
-							if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
+							else if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
 								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
 									int k = fields[mouseZCell][mouseXCell];
 									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 									fields[currentZ][currentX] = -1;
 									// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
-									checkW = pieces[28]->isCheckOccured(pieces, fields);
+									checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
 									fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 									fields[mouseZCell][mouseXCell] = k;
 									// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
@@ -379,10 +382,10 @@ namespace ChessGame {
 									}
 								}
 							}
-							// якщо ф≥гура не намагаЇтьс€ нанести удар по ф≥гур≥, а просто намагаЇтьс€ походити, перев≥р€Їмо коректн≥сть ходу
+							// якщо ф≥гура намагаЇтьс€ походити, перев≥р€Їмо коректн≥сть ходу
 							else if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 								// якщо п≥сл€ цього ходу король не зв≥льнивс€ в≥д шаху, повертаЇмо ф≥гуру назад
-								if (pieces[28]->isCheckOccured(pieces, fields) != -1) {
+								if (static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields) != -1) {
 									p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 								}
 								// якщо п≥сл€ цього ходу король зв≥льнивс€ в≥д шаху, тобто ф≥гура закрила корол€
@@ -394,8 +397,6 @@ namespace ChessGame {
 						}
 						// якщо чорним оголошено шах ≥ зараз х≥д чорних
 						else if (checkB != -1 && !whiteMove) {
-							//TODO помен€ть возврат isCHeckOccured обратно на bool. » кста проделать такую же проверку двойного шаха с белыми фигурами.
-							// ≈щЄ сделать коммит после этого на гит.
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 							if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
 								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
@@ -403,7 +404,7 @@ namespace ChessGame {
 									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 									fields[currentZ][currentX] = -1;
 									// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
-									checkB = pieces[4]->isCheckOccured(pieces, fields);
+									checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
 									fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 									fields[mouseZCell][mouseXCell] = k;
 									// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
@@ -415,10 +416,10 @@ namespace ChessGame {
 									}
 								}
 							}
-							// якщо ф≥гура намагаЇтьс€ забрати ф≥гуру, що не спричинала шах, то цей удар неможливий, тому в≥н скасовуЇтьс€
+							// якщо ф≥гура намагаЇтьс€ походити, перев≥р€Їмо коректн≥сть ходу
 							else if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 								// якщо п≥сл€ цього ходу король не зв≥льнивс€ в≥д шаху, повертаЇмо ф≥гуру назад
-								if (pieces[4]->isCheckOccured(pieces, fields) != -1) {
+								if (static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields) != -1) {
 									p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 								}
 								// якщо п≥сл€ цього ходу король зв≥льнивс€ в≥д шаху, тобто ф≥гура закрила корол€
@@ -441,9 +442,26 @@ namespace ChessGame {
 								// якщо кол≥р поточноњ ф≥гури б≥лий, зараз х≥д б≥лих ≥ ф≥гура, €ку хочемо побити, чорна, то перев≥р€Їмо удар по чорн≥й
 								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B') {
 									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
-										pieces[fields[mouseZCell][mouseXCell]]->setXCenter(-5 - delW++);
-										pieces[fields[mouseZCell][mouseXCell]]->setZCenter(4);
-										p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
+										int k = fields[mouseZCell][mouseXCell];
+										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
+										fields[currentZ][currentX] = -1;
+										checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+										checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+										fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
+										fields[mouseZCell][mouseXCell] = k;
+										if (checkB != -1 && p->getColor() == 'B') {
+											checkB = -1;
+											hit = false;
+										}
+										else if (checkW != -1 && p->getColor() == 'W') {
+											checkW = -1;
+											hit = false;
+										}
+										else {
+											pieces[fields[mouseZCell][mouseXCell]]->setXCenter(-5 - delW++);
+											pieces[fields[mouseZCell][mouseXCell]]->setZCenter(4);
+											p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
+										}
 									}
 								}
 							}
@@ -458,9 +476,26 @@ namespace ChessGame {
 								// якщо кол≥р поточноњ ф≥гури чорний, зараз х≥д чорних ≥ ф≥гура, €ку хочемо побити, б≥ла, то перев≥р€Їмо удар по б≥л≥й
 								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W') {
 									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
-										pieces[fields[mouseZCell][mouseXCell]]->setXCenter(6 + delB++);
-										pieces[fields[mouseZCell][mouseXCell]]->setZCenter(-3);
-										p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
+										int k = fields[mouseZCell][mouseXCell];
+										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
+										fields[currentZ][currentX] = -1;
+										checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+										checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+										fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
+										fields[mouseZCell][mouseXCell] = k;
+										if (checkB != -1 && p->getColor() == 'B') {
+											checkB = -1;
+											hit = false;
+										}
+										else if (checkW != -1 && p->getColor() == 'W') {
+											checkW = -1;
+											hit = false;
+										}
+										else {
+											pieces[fields[mouseZCell][mouseXCell]]->setXCenter(6 + delB++);
+											pieces[fields[mouseZCell][mouseXCell]]->setZCenter(-3);
+											p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
+										}
 									}
 								}
 							}
@@ -471,8 +506,8 @@ namespace ChessGame {
 							// якщо сталос€ рок≥руванн€ або удар, х≥д переходить до противника
 							else if (castlingOccured || hit) {
 								// ѕерев≥рка на шах п≥сл€ удару чи рок≥руванн€
-								checkB = pieces[4]->isCheckOccured(pieces, fields);
-								checkW = pieces[28]->isCheckOccured(pieces, fields);
+								checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+								checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
 								whiteMove = !whiteMove;
 								std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 							}
@@ -482,19 +517,27 @@ namespace ChessGame {
 							if ((p->getColor() == 'W' && whiteMove) || (p->getColor() == 'B' && !whiteMove)) {
 								if (p->correctMove(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									// ѕерев≥рка на шах дл€ обох королей
-									checkB = pieces[4]->isCheckOccured(pieces, fields);
-									checkW = pieces[28]->isCheckOccured(pieces, fields);
+									checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+									checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
 									// якщо король робить х≥д, €кий призведе до шаху, повертаЇмо його назад
-									if (checkB != -1 && p->getColor() == 'B' && typeid(*p) == typeid(King)) {
+									if (checkB != -1 && p->getColor() == 'B') {
 										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 										checkB = -1;
 									}
-									else if (checkW != -1 && p->getColor() == 'W' && typeid(*p) == typeid(King)) {
+									else if (checkW != -1 && p->getColor() == 'W') {
 										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 										checkW = -1;
 									}
 									else { // якщо сталос€ усп≥шне перем≥щенн€, х≥д переходить до противника
-										whiteMove = !whiteMove;
+										if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
+											std::cout << "MATE WHITE!!!!!!\n";
+										}
+										else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccured(pieces, fields)) {
+											std::cout << "MATE BLACK!!!!!!\n";
+										}
+										else {
+											whiteMove = !whiteMove;
+										}
 									}
 									std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 								}

@@ -149,7 +149,7 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	int Queen::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
+	int Queen::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		if (this->getId() != fields[currentZ][currentX]) {
 			return 0;

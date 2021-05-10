@@ -37,7 +37,7 @@ namespace ChessGame {
 		virtual void draw() override;
 		virtual bool correctMove(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) = 0;
 		virtual bool isHitPossible(Piece *pieces[32], int (&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) = 0;
-		virtual int isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) = 0;
+		virtual int check(Piece* pieces[32], int(&fields)[8][8]) = 0;
 		void movePieceToPosition(int (&fields)[8][8], int zDestination, int xDestionation, int currentZ, int currentX);
 	};
 }
