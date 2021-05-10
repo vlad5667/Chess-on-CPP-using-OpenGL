@@ -46,7 +46,7 @@ namespace ChessGame {
 			}
 		}
 	}
-	bool Pawn::isHitPossible(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) {
+	bool Pawn::isHitPossible(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		if (getColor() == 'W') {
 			// Перевірка можливості побити ворожу фігуру
 			if (zStart - mouseZCell == 1 && abs(mouseXCell - xStart) == 1) {
@@ -97,5 +97,24 @@ namespace ChessGame {
 			}
 		}
 		return 0;
+	}
+	bool Pawn::isEnPassantOccured(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		int prevPieceZ = pieces[prevPieceId]->getZCenter() + 3, prevPieceX = pieces[prevPieceId]->getXCenter() + 3;
+		if (this->getColor() == 'W' && prevPieceId >= 8 && prevPieceId <= 15) {
+			if (prevPieceZ == 3 && currentZ == 2 && prevPieceX == currentX) {
+				if (mouseZCell - prevPieceZ == -1 && mouseXCell == prevPieceX) {
+					return true;
+				}
+			}
+		}
+		else if (this->getColor() == 'B' && prevPieceId >= 16 && prevPieceId <= 23) {
+			if (prevPieceZ == 4 && currentZ == 5 && prevPieceX == currentX) {
+				if (mouseZCell - prevPieceZ == 1 && mouseXCell == prevPieceX) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

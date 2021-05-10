@@ -44,7 +44,7 @@ namespace ChessGame {
 			return false;
 		}
 	}
-	bool Rook::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) {
+	bool Rook::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		// Перевірка можливості побити ворожу фігуру
 		if (abs(mouseZCell - zStart) != 0 && abs(mouseXCell - xStart) == 0) {
 			if (mouseZCell < zStart) {

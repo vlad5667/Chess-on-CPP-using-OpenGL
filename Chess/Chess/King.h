@@ -14,9 +14,9 @@ namespace ChessGame {
 				diffColor, ambiColor, specColor, shininess, radius, texture) { }
 
 		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
-		virtual bool isHitPossible(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) override;
+		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
-		bool isCastlingPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX);
+		bool isCastlingOccured(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX);
 		int isCheckOccured(Piece* pieces[32], int(&fields)[8][8]);
 		bool isMateOccured(Piece* pieces[32], int(&fields)[8][8]);
 	};

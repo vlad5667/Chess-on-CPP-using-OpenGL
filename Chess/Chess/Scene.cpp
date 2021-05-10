@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <gl/glut.h>
+#include <string>
 #include "Scene.h"
 #include "Cube.h"
 #include "utils.h"
@@ -36,12 +37,13 @@ namespace ChessGame {
 		stbi_image_free(image);
 		return texture;
 	}
-
 	bool collision = false; // «м≥нна, що сигнал≥зуЇ про кол≥з≥ю з ≥ншою ф≥гурою
 	int delW = 0, delB = 0; // «м≥нн≥, що задають координату ’ дл€ побитих ф≥гур
 	bool castlingOccuredW = false; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ б≥лих
 	bool castlingOccuredB = false; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ чорних
 	int checkW = -1, checkB = -1; // «м≥нн≥, що сигнал≥зують, ставс€ шах чи н≥
+	bool mateOccuredW = false, mateOccuredB = false; // «м≥нн≥, що сигнал≥зують, ставс€ мат чи н≥
+	int prevPieceId = 0; // «м≥нна, що збер≥гаЇ ≥дентиф≥катор ф≥гура, що ходила до цього (потр≥бно дл€ вз€тт€ на проход≥)
 	Scene::Scene() {
 		GLuint texture = 0;
 		int k = 0;
@@ -153,6 +155,9 @@ namespace ChessGame {
 		castlingOccuredW = false;
 		castlingOccuredB = false;
 		checkW = -1, checkB = -1;
+		mateOccuredW = false;
+		mateOccuredB = false;
+		prevPieceId = 0;
 		whiteMove = true;
 		distZ = -13;
 		angleX = 0;
@@ -246,13 +251,28 @@ namespace ChessGame {
 	}
 	// ќброблювач под≥њ, пов'€заноњ з перемалюванн€м в≥кна
 	void Scene::on_paint() {
-		char text[128];
+		std::string interfaceNavigation, state;
+
 		if (whiteMove) {
-			strcpy_s(text, 128, "White to move");
-		} else {
-			strcpy_s(text, 128, "Black to move");
+			state = "White to move";
+		} 
+		else {
+			state = "Black to move";
 		}
-		//sprintf(text, "F2 - Restart game   Esc - Exit              Time: %d sec.", time);
+		if (checkW != -1) {
+			state = "Check white";
+		}
+		else if (checkB != -1) {
+			state = "Check black";
+		}
+		if (mateOccuredW) {
+			state = "Mate white";
+		}
+		else if (mateOccuredB) {
+			state = "Mate black";
+		}
+		interfaceNavigation = "F2 - restart game";
+
 		glViewport(0, 0, width, height);
 
 		// ≤н≥ц≥ал≥зуЇмо параметри матер≥ал≥в ≥ джерела св≥тла:
@@ -281,7 +301,8 @@ namespace ChessGame {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glColor3f(1, 1, 0); // жовтий текст
-		drawString(GLUT_BITMAP_TIMES_ROMAN_24, text, 0.01, 0.95);
+		drawString(GLUT_BITMAP_TIMES_ROMAN_24, interfaceNavigation.c_str(), 0.01, 0.95);
+		drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.88);
 		glPopMatrix();
 
 		// ¬ключаЇмо режим роботи з матрицею проекц≥й:
@@ -338,14 +359,16 @@ namespace ChessGame {
 		if (state == GLUT_UP) { // кнопка в≥джата
 			// ¬≥джата кнопка була л≥вою
 			if (button == 0) {
+				//TODO FIXES сделать чтобы король мог бить, сделать интерфейс, сделать ѕат
+				//TODO пешку превращать в ферз€, слона или ладью (promotion)
 				//TODO сделать нормальную рокировку, то есть учесть все услови€ (если на линии рокировки есть клетка, котора€ бьЄтс€ вражеской фигурой, то рокировка не возможна)
-				//TODO если король бьЄт фигуру, провер€ть чтобы он не попадал при этом под новый шах
 				//std::cout << zStart << " " << currentZ << " " << xStart << " " << currentX << " " << mouseZCell << " " << mouseXCell  << "\n";
 				downAllPieces();
 				findNearest(x, y, mouseXCell, mouseZCell);
 				Piece* p = pieces[fields[currentZ][currentX]]; // ¬каз≥вник на поточну ф≥гуру
 				bool hit = false; // «м≥нна, що сигнал≥зуЇ, ставс€ удар по ворож≥й ф≥гур≥ чи н≥
 				bool castlingOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ рок≥руванн€ чи н≥
+				bool enPassantOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ вз€тт€ на прозод≥ чи н≥
 				// якщо ф≥гура намагаЇтьс€ перем≥ститис€ за меж≥ дошки, повертаЇмо њњ обратно
 				if (mouseXCell == -1 || mouseZCell == -1) {
 					//std::cout << "mouseXCell " << mouseXCell << " mouseZCell " << mouseZCell << "\n";
@@ -358,14 +381,28 @@ namespace ChessGame {
 					// якщо була обрана €кась ф≥гура та перем≥стилас€ (не за меж≥ дошки), то виконуЇмо подальщ≥ перев≥рки
 				} else if (mouseZCell != -1 && mouseXCell != -1) {
 					if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
+						if (p->getId() >= 8 && p->getId() <= 23) {
+							enPassantOccured = static_cast<Pawn*>(p)->isEnPassantOccured(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
+						}
+						if (enPassantOccured) {
+							if (pieces[prevPieceId]->getColor() == 'W') {
+								pieces[prevPieceId]->setXCenter(6 + delB++);
+								pieces[prevPieceId]->setZCenter(-3);
+							}
+							else {
+								pieces[prevPieceId]->setXCenter(-5 - delW++);
+								pieces[prevPieceId]->setZCenter(4);
+							}
+							whiteMove = !whiteMove;
+						}
 						// якщо б≥лим оголошено шах ≥ зараз њх х≥д
-						if (checkW != -1 && whiteMove) {
+						else if (checkW != -1 && whiteMove) {
 							if (static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
-								std::cout << "MATE!!!!!!\n";
+								mateOccuredW = true;
 							}
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 							else if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
-								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
+								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									int k = fields[mouseZCell][mouseXCell];
 									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 									fields[currentZ][currentX] = -1;
@@ -397,9 +434,12 @@ namespace ChessGame {
 						}
 						// якщо чорним оголошено шах ≥ зараз х≥д чорних
 						else if (checkB != -1 && !whiteMove) {
+							if (static_cast<King*>(pieces[4])->isMateOccured(pieces, fields)) {
+								mateOccuredB = true;
+							}
 							// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
-							if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
-								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
+							else if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
+								if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									int k = fields[mouseZCell][mouseXCell];
 									fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 									fields[currentZ][currentX] = -1;
@@ -435,13 +475,13 @@ namespace ChessGame {
 							if (p->getColor() == 'W' && whiteMove) {
 								// якщо рок≥руванн€ ще не сталос€, ≥ поточна ф≥гура король, перев≥р€Їмо рок≥руванн€
 								if (!castlingOccuredW && typeid(*p) == typeid(King)) {
-										castlingOccuredW = static_cast<King*>(p)->isCastlingPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
-										castlingOccured = castlingOccuredW;
-										hit = castlingOccuredW;
+									castlingOccuredW = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
+									castlingOccured = castlingOccuredW;
+									hit = castlingOccuredW;
 								}
 								// якщо кол≥р поточноњ ф≥гури б≥лий, зараз х≥д б≥лих ≥ ф≥гура, €ку хочемо побити, чорна, то перев≥р€Їмо удар по чорн≥й
-								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B') {
-									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
+								else if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B') {
+									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
@@ -469,13 +509,13 @@ namespace ChessGame {
 							else if (p->getColor() == 'B' && !whiteMove) {
 								// якщо рок≥руванн€ ще не сталос€, ≥ поточна ф≥гура король, перев≥р€Їмо рок≥руванн€
 								if (!castlingOccuredB && typeid(*p) == typeid(King)) {
-									castlingOccuredB = static_cast<King*>(p)->isCastlingPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
-									castlingOccured = castlingOccuredB;
-									hit = castlingOccuredB;
+										castlingOccuredB = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
+										castlingOccured = castlingOccuredB;
+										hit = castlingOccuredB;
 								}
 								// якщо кол≥р поточноњ ф≥гури чорний, зараз х≥д чорних ≥ ф≥гура, €ку хочемо побити, б≥ла, то перев≥р€Їмо удар по б≥л≥й
-								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W') {
-									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX)) {
+								else if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W') {
+									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
@@ -530,10 +570,10 @@ namespace ChessGame {
 									}
 									else { // якщо сталос€ усп≥шне перем≥щенн€, х≥д переходить до противника
 										if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
-											std::cout << "MATE WHITE!!!!!!\n";
+											mateOccuredW = true;
 										}
 										else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccured(pieces, fields)) {
-											std::cout << "MATE BLACK!!!!!!\n";
+											mateOccuredB = true;
 										}
 										else {
 											whiteMove = !whiteMove;
@@ -553,6 +593,7 @@ namespace ChessGame {
 						}
 					}
 				}
+				prevPieceId = p->getId();
 			}
 			this->button = -1;  // н≥€ка кнопка не натиснута
 			return;
