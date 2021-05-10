@@ -9,7 +9,9 @@
 #include "Bishop.h"
 #include "Queen.h"
 #include "King.h"
+
 #include <vector>
+
 namespace ChessGame {
 	const int M = 8, N = 8; // кількість рядків та колонок поля
 
@@ -39,6 +41,7 @@ namespace ChessGame {
 		void on_mouse(int button, int state, int x, int y);
 		void on_motion(int x, int y);
 		void on_special(int key, int x, int y);
+		void on_keyboard(unsigned char key, int x, int y);
 		void on_timer(int value);
 	private:
 		void initialize();

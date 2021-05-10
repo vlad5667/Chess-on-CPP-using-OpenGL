@@ -2,6 +2,8 @@
 #include "Piece.h"
 #include "utils.h"
 #include "Scene.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 namespace ChessGame {
 	void Piece::draw() {
@@ -44,5 +46,29 @@ namespace ChessGame {
         this->setZCenter(zDestination - 3);
         fields[zDestination][xDestionation] = fields[currentZ][currentX];
         fields[currentZ][currentX] = -1;
+    }
+    void Piece::loadTexture(const char* imagePath) {
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        // Встановлюємо параметри накладання і фільтрації текстур (для поточного зв'язаного об'єкту текстури)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Завантаження і генерація текстури
+        int width, height, nrChannels;
+        unsigned char* image = stbi_load(imagePath, &width, &height, &nrChannels, STBI_rgb_alpha);
+        if (image != nullptr) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        }
+        else {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        // Звільнення пам'яті
+        stbi_image_free(image);
+        this->texture = texture;
     }
 }

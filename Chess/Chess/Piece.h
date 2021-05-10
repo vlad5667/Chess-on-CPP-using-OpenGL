@@ -16,14 +16,13 @@ namespace ChessGame {
 	public:
 		Piece(int id, char color, float xCenter, float yCenter, float zCenter,
 			float xSize, float ySize, float zSize,
-			float* diffColor, float* ambiColor, float* specColor, float shininess, float radius, GLuint texture, bool firstMove = true)
+			float* diffColor, float* ambiColor, float* specColor, float shininess, float radius, bool firstMove = true)
 			: Shape(xCenter, yCenter, zCenter,
 				xSize, ySize, zSize,
 				specColor, diffColor, ambiColor, shininess) {
 			this->id = id;
 			this->color = color;
 			this->radius = radius;
-			this->texture = texture;
 		}
 
 		int getId() { return id; }
@@ -39,6 +38,7 @@ namespace ChessGame {
 		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) = 0;
 		virtual int check(Piece* pieces[32], int(&fields)[8][8]) = 0;
 		void movePieceToPosition(int (&fields)[8][8], int zDestination, int xDestionation, int currentZ, int currentX);
+		void loadTexture(const char* imagePath);
 	};
 }
 

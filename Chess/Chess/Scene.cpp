@@ -1,42 +1,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
+#include <conio.h>
 #include <iostream>
 #include <gl/glut.h>
 #include <string>
 #include "Scene.h"
 #include "Cube.h"
 #include "utils.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
-namespace ChessGame {	
+namespace ChessGame {
 	using namespace GraphUtils;
-
-	// Функція завантаження текстури
-	GLuint loadTexture(const char *imagePath) {
-		GLuint texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		// Встановлюємо параметри накладання і фільтрації текстур (для поточного зв'язаного об'єкту текстури)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		// Завантаження і генерація текстури
-		int width, height, nrChannels;
-		unsigned char* image = stbi_load(imagePath, &width, &height, &nrChannels, STBI_rgb_alpha);
-		if (image != nullptr) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-		}
-		else {
-			std::cout << "Failed to load texture" << std::endl;
-		}
-		// Звільнення пам'яті
-		stbi_image_free(image);
-		return texture;
-	}
 	bool collision = false; // Змінна, що сигналізує про колізію з іншою фігурою
 	int delW = 0, delB = 0; // Змінні, що задають координату Х для побитих фігур
 	bool castlingOccuredW = false; // Змінна, що сигналізує, що сталося рокірування білих
@@ -44,6 +17,7 @@ namespace ChessGame {
 	int checkW = -1, checkB = -1; // Змінні, що сигналізують, стався шах чи ні
 	bool mateOccuredW = false, mateOccuredB = false; // Змінні, що сигналізують, стався мат чи ні
 	int prevPieceId = 0; // Змінна, що зберігає ідентифікатор фігура, що ходила до цього (потрібно для взяття на проході)
+	int promotionMode = 0; // Змінна, що сигналізує про вибір фігури для перетворення пішака
 	Scene::Scene() {
 		GLuint texture = 0;
 		int k = 0;
@@ -53,65 +27,72 @@ namespace ChessGame {
 				if (i % 2 != 0) {
 					if (j % 2 == 0) {
 						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffBlack, ambiBlack, specBlack, 0.078125));
-					} else {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffWhite, ambiWhite, specWhite, 0.6));
 					}
-				} else {
-					if (j % 2 != 0) {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffBlack, ambiBlack, specBlack, 0.078125));
-					} else {
+					else {
 						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffWhite, ambiWhite, specWhite, 0.6));
 					}
 				}
-				//Паралельно додаємо фігури на дошку
+				else {
+					if (j % 2 != 0) {
+						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffBlack, ambiBlack, specBlack, 0.078125));
+					}
+					else {
+						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffWhite, ambiWhite, specWhite, 0.6));
+					}
+				}
+			}
+		}
+		// Додаємо фігури на дошку
+		for (int i = -3; i < N - 3; i++) {
+			for (int j = -3; j < M - 3; j++) {
 				if (i <= -2 || i >= 3) {
 					if (i == -2) {
-						texture = loadTexture("textures/b_p.png");
-						shapes.push_back(pieces[k] = new Pawn(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Pawn(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_p.png");
 					}
 					else if (i == 3) {
-						texture = loadTexture("textures/w_p.png");
-						shapes.push_back(pieces[k] = new Pawn(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Pawn(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_p.png");
 					}
 					else if (i == -3 && (j == -3 || j == 4)) {
-						texture = loadTexture("textures/b_r.png");
-						shapes.push_back(pieces[k] = new Rook(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Rook(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_r.png");
 					}
 					else if (i == 4 && (j == -3 || j == 4)) {
-						texture = loadTexture("textures/w_r.png");
-						shapes.push_back(pieces[k] = new Rook(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Rook(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_r.png");
 					}
 					else if (i == -3 && (j == -2 || j == 3)) {
-						texture = loadTexture("textures/b_kn.png");
-						shapes.push_back(pieces[k] = new Knight(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Knight(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_kn.png");
 					}
 					else if (i == 4 && (j == -2 || j == 3)) {
-						texture = loadTexture("textures/w_kn.png");
-						shapes.push_back(pieces[k] = new Knight(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Knight(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_kn.png");
 					}
 					else if (i == -3 && (j == -1 || j == 2)) {
-						texture = loadTexture("textures/b_b.png");
-						shapes.push_back(pieces[k] = new Bishop(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Bishop(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_b.png");
 					}
 					else if (i == 4 && (j == -1 || j == 2)) {
-						texture = loadTexture("textures/w_b.png");
-						shapes.push_back(pieces[k] = new Bishop(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Bishop(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_b.png");
 					}
 					else if (i == -3 && j == 0) {
-						texture = loadTexture("textures/b_q.png");
-						shapes.push_back(pieces[k] = new Queen(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Queen(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_q.png");
 					}
 					else if (i == 4 && j == 0) {
-						texture = loadTexture("textures/w_q.png");
-						shapes.push_back(pieces[k] = new Queen(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new Queen(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_q.png");
 					}
 					else if (i == -3 && j == 1) {
-						texture = loadTexture("textures/b_k.png");
-						shapes.push_back(pieces[k] = new King(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffBlack, ambiBlack, specBlack, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new King(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/b_k.png");
 					}
 					else if (i == 4 && j == 1) {
-						texture = loadTexture("textures/w_k.png");
-						shapes.push_back(pieces[k] = new King(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4, texture));
+						shapes.push_back(pieces[k] = new King(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+						pieces[k]->loadTexture("textures/w_k.png");
 					}
 					k++;
 				}
@@ -135,7 +116,8 @@ namespace ChessGame {
 					pieces[k]->setCoords(j - 3, 0.3, i - 3);
 					pieces[k]->setFirstMove(true);
 					k++;
-				} else {
+				}
+				else {
 					fields[i][j] = -1;
 				}
 			}
@@ -158,6 +140,7 @@ namespace ChessGame {
 		mateOccuredW = false;
 		mateOccuredB = false;
 		prevPieceId = 0;
+		promotionMode = 0;
 		whiteMove = true;
 		distZ = -13;
 		angleX = 0;
@@ -167,6 +150,9 @@ namespace ChessGame {
 	bool Scene::movePiece(int currentZ, int currentX, int zTo, int xTo) {
 		// Перевірка можливості переміщення:
 		if (xTo < 0 || zTo < 0 || xTo >= N || zTo >= M) {
+			return false;
+		}
+		if (currentX < 0 || currentZ < 0 || currentX >= N || currentZ >= M) {
 			return false;
 		}
 		if (currentX == xTo && currentZ == zTo) {
@@ -251,8 +237,63 @@ namespace ChessGame {
 	}
 	// Оброблювач події, пов'язаної з перемалюванням вікна
 	void Scene::on_paint() {
-		std::string interfaceNavigation, state;
+		std::string interfaceNavigation, state, promotion;
 
+		if (promotionMode > 1) {
+			int id = prevPieceId;
+			float x = pieces[id]->getXCenter(), z = pieces[id]->getZCenter();
+			if (pieces[id]->getColor() == 'W') {
+				GLuint texture;
+				switch (promotionMode) {
+				case 2:
+					pieces[id] = new Queen(id, 'W', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/w_q.png");
+					break;
+				case 3:
+					pieces[id] = new Bishop(id, 'W', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/w_b.png");
+					break;
+				case 4:
+					pieces[id] = new Knight(id, 'W', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/w_kn.png");
+					break;
+				case 5:
+					pieces[id] = new Rook(id, 'W', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/w_r.png");
+					break;
+				}
+			}
+			else {
+				GLuint texture;
+				switch (promotionMode) {
+				case 2:
+					pieces[id] = new Queen(id, 'B', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/b_q.png");
+					break;
+				case 3:
+					pieces[id] = new Bishop(id, 'B', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/b_b.png");
+					break;
+				case 4:
+					pieces[id] = new Knight(id, 'B', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/b_kn.png");
+					break;
+				case 5:
+					pieces[id] = new Rook(id, 'B', x, 0.3, z, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4);
+					pieces[id]->loadTexture("textures/b_r.png");
+					break;
+				}
+			}
+			pieces[id]->setFirstMove(false);
+			shapes[64 + id] = pieces[id];
+			promotionMode = 0;
+		}
+		if (promotionMode) {
+			promotion = "Select the promotion piece (q - Queen, b - Bishop, k - Knight, r - Rook)";
+		}
+		else {
+			promotion = "";
+		}
 		if (whiteMove) {
 			state = "White to move";
 		} 
@@ -303,6 +344,7 @@ namespace ChessGame {
 		glColor3f(1, 1, 0); // жовтий текст
 		drawString(GLUT_BITMAP_TIMES_ROMAN_24, interfaceNavigation.c_str(), 0.01, 0.95);
 		drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.88);
+		drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.3, 0.88);
 		glPopMatrix();
 
 		// Включаємо режим роботи з матрицею проекцій:
@@ -356,35 +398,39 @@ namespace ChessGame {
 		// Зберігаємо поточні координати миші:
 		mouseX = x;
 		mouseY = y;
-		if (state == GLUT_UP) { // кнопка віджата
+		if (state == GLUT_UP && !promotionMode) { // кнопка віджата
 			// Віджата кнопка була лівою
 			if (button == 0) {
 				//TODO FIXES сделать чтобы король мог бить, сделать интерфейс, сделать Пат
 				//TODO пешку превращать в ферзя, слона или ладью (promotion)
 				//TODO сделать нормальную рокировку, то есть учесть все условия (если на линии рокировки есть клетка, которая бьётся вражеской фигурой, то рокировка не возможна)
-				//std::cout << zStart << " " << currentZ << " " << xStart << " " << currentX << " " << mouseZCell << " " << mouseXCell  << "\n";
 				downAllPieces();
 				findNearest(x, y, mouseXCell, mouseZCell);
-				Piece* p = pieces[fields[currentZ][currentX]]; // Вказівник на поточну фігуру
-				bool hit = false; // Змінна, що сигналізує, стався удар по ворожій фігурі чи ні
-				bool castlingOccured = false; // Змінна, що сигналізує, сталося рокірування чи ні
-				bool enPassantOccured = false; // Змінна, що сигналізує, сталося взяття на прозоді чи ні
-				// Якщо фігура намагається переміститися за межі дошки, повертаємо її обратно
-				if (mouseXCell == -1 || mouseZCell == -1) {
-					//std::cout << "mouseXCell " << mouseXCell << " mouseZCell " << mouseZCell << "\n";
-					//std::cout << "xStart " << xStart << " zStart " << zStart << " currentX " << currentX << " currentZ " << currentZ << "\n";
-					if (zStart != -1 && xStart != -1 && currentZ != -1 && currentX != -1 && pieces[fields[currentZ][currentX]] == p) {
-						p->movePieceToPosition(fields, zStart, xStart, currentZ, currentX);
-					}
-					this->button = -1;
-					return;
-					// Якщо була обрана якась фігура та перемістилася (не за межі дошки), то виконуємо подальщі перевірки
-				} else if (mouseZCell != -1 && mouseXCell != -1) {
-					if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
-						if (p->getId() >= 8 && p->getId() <= 23) {
-							enPassantOccured = static_cast<Pawn*>(p)->isEnPassantOccured(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
+				if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
+					Piece* p = pieces[fields[currentZ][currentX]]; // Вказівник на поточну фігуру
+					bool hit = false; // Змінна, що сигналізує, стався удар по ворожій фігурі чи ні
+					bool castlingOccured = false; // Змінна, що сигналізує, сталося рокірування чи ні
+					bool enPassantOccured = false; // Змінна, що сигналізує, сталося взяття на прозоді чи ні
+					bool promotionOccured = false; // Змінна, що сигналізує, сталося перетворення пішака чи ні
+					// Якщо фігура намагається переміститися за межі дошки, повертаємо її обратно
+					std::cout << "currentZ " << currentZ << "  currentX " << currentX << "\n";
+					if (mouseXCell == -1 || mouseZCell == -1 || currentZ == -1 || currentX == -1) {
+						if (zStart != -1 && xStart != -1 && currentZ != -1 && currentX != -1 && pieces[fields[currentZ][currentX]] == p) {
+							p->movePieceToPosition(fields, zStart, xStart, currentZ, currentX);
 						}
-						if (enPassantOccured) {
+						this->button = -1;
+						return;
+						// Якщо була обрана якась фігура та перемістилася (не за межі дошки), то виконуємо подальщі перевірки
+					}
+					else if (mouseZCell != -1 && mouseXCell != -1) {
+						if (typeid(*p) == typeid(Pawn)) {
+							enPassantOccured = static_cast<Pawn*>(p)->isEnPassantOccured(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
+							promotionOccured = static_cast<Pawn*>(p)->isPromotionOccured(mouseZCell, mouseXCell);
+						}
+						if (promotionOccured && checkW == -1 && checkB == -1) {
+							promotionMode = 1;
+						}
+						if (enPassantOccured && checkW == -1 && checkB == -1) {
 							if (pieces[prevPieceId]->getColor() == 'W') {
 								pieces[prevPieceId]->setXCenter(6 + delB++);
 								pieces[prevPieceId]->setZCenter(-3);
@@ -480,7 +526,7 @@ namespace ChessGame {
 									hit = castlingOccuredW;
 								}
 								// Якщо колір поточної фігури білий, зараз хід білих і фігура, яку хочемо побити, чорна, то перевіряємо удар по чорній
-								else if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B') {
+								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B' && !castlingOccured) {
 									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
@@ -509,12 +555,12 @@ namespace ChessGame {
 							else if (p->getColor() == 'B' && !whiteMove) {
 								// Якщо рокірування ще не сталося, і поточна фігура король, перевіряємо рокірування
 								if (!castlingOccuredB && typeid(*p) == typeid(King)) {
-										castlingOccuredB = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
-										castlingOccured = castlingOccuredB;
-										hit = castlingOccuredB;
+									castlingOccuredB = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
+									castlingOccured = castlingOccuredB;
+									hit = castlingOccuredB;
 								}
 								// Якщо колір поточної фігури чорний, зараз хід чорних і фігура, яку хочемо побити, біла, то перевіряємо удар по білій
-								else if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W') {
+								if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W' && !castlingOccured) {
 									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
@@ -583,24 +629,24 @@ namespace ChessGame {
 								}
 							}
 						}
-						if (whiteMove) {
-							angleX = 0;
-							angleY = angleY < 0 ? -angleY : angleY;
-						} 
-						else {
-							angleX = 180;
-							angleY = angleY > 0 ? -angleY : angleY;
-						}
+					}
+					prevPieceId = p->getId();
+					if (whiteMove) {
+						angleX = 0;
+						angleY = angleY < 0 ? -angleY : angleY;
+					}
+					else {
+						angleX = 180;
+						angleY = angleY > 0 ? -angleY : angleY;
 					}
 				}
-				prevPieceId = p->getId();
 			}
 			this->button = -1;  // ніяка кнопка не натиснута
 			return;
 		}
 		this->button = button;  // зберігаємо інформацію про кнопки
-		if (findNearest(x, y, currentX, currentZ)) {
-			if (button == 0 && fields[currentZ][currentX] != -1) {
+		if (findNearest(x, y, currentX, currentZ) && currentX != -1 && currentZ != -1) {
+			if (button == 0 && fields[currentZ][currentX] != -1 && !promotionMode) {
 				upPiece(currentX, currentZ);
 				xStart = currentX;
 				zStart = currentZ;
@@ -610,7 +656,7 @@ namespace ChessGame {
 	void Scene::on_motion(int x, int y) {
 		switch (button) {
 		case 0:
-			if (findNearest(x, y, xTo, zTo) && fields[currentZ][currentX] != -1) {
+			if (findNearest(x, y, xTo, zTo) && fields[currentZ][currentX] != -1 && !promotionMode) {
 				if (movePiece(currentZ, currentX, zTo, xTo)) {
 					currentX = xTo;
 					currentZ = zTo;
@@ -643,6 +689,26 @@ namespace ChessGame {
 		case GLUT_KEY_F2:   // нова гра
 			initialize();
 			break;
+		}
+	}
+
+	void Scene::on_keyboard(unsigned char key, int x, int y) {
+		if (promotionMode) {
+			switch (key) {
+			case int('q'):
+				promotionMode = 2;
+				break;
+			case int('b'):
+				promotionMode = 3;
+				break;
+			case int('k') :
+				promotionMode = 4;
+				break;
+			case int('r'):
+				promotionMode = 5;
+				break;
+
+			}
 		}
 	}
 
