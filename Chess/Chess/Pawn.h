@@ -8,15 +8,16 @@ namespace ChessGame {
 	public:
 		Pawn(int id, char color, float xCenter, float yCenter, float zCenter,
 			float xSize, float ySize, float zSize,
-			float* diffColor, float* ambiColor, float* specColor, float shininess, float radius, GLuint texture)
+			float* diffColor, float* ambiColor, float* specColor, float shininess, float radius)
 			: Piece(id, color, xCenter, yCenter, zCenter,
 				xSize, ySize, zSize,
-				diffColor, ambiColor, specColor, shininess, radius, texture) { }
+				diffColor, ambiColor, specColor, shininess, radius) { }
 
 		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool Pawn::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
 		bool isEnPassantOccured(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
+		bool isPromotionOccured(int mouseZCell, int mouseXCell);
 	};
 }
 

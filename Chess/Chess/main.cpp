@@ -29,6 +29,11 @@ void on_special(int key, int x, int y) {
 	scene->on_special(key, x, y);
 }
 
+void on_keyboard(unsigned char key, int x, int y) {
+	// Обробка подій від клавіатури:
+	scene->on_keyboard(key, x, y);
+}
+
 void on_timer(int value) {
 	// Обробка події від таймера
 	scene->on_timer(value);
@@ -44,6 +49,7 @@ int main(int argc, char* argv[]) {
 	glutReshapeFunc(on_size);      // реєструємо функцію обробки зміни розмірів вікна
 	glutMotionFunc(on_motion);     // реєструємо функцію, яка відповідає за переміщення миші з натиснутою кнопкою
 	glutMouseFunc(on_mouse);       // реєструємо функцію, яка відповідає за натискання на кнопку миші
+	glutKeyboardFunc(on_keyboard); // реєструємо функцію, яка відповідає за натискання клавіш
 	glutSpecialFunc(on_special);   // реєструємо функцію, яка відповідає за натискання спеціальних клавіш
 	glutTimerFunc(25, on_timer, 0);
 	scene = new Scene();
