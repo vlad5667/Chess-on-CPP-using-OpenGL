@@ -48,25 +48,188 @@ namespace ChessGame {
 		}
 		return false;
 	}
+	int King::check(Piece* pieces[32], int(&fields)[8][8]) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (this->getId() != fields[currentZ][currentX]) {
+			return 0;
+		}
+		if (currentZ <= 6) {
+			if (fields[currentZ + 1][currentX] != -1) {
+				Piece* p = pieces[fields[currentZ + 1][currentX]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentZ >= 1) {
+			if (fields[currentZ - 1][currentX] != -1) {
+				Piece* p = pieces[fields[currentZ - 1][currentX]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentX >= 1) {
+			if (fields[currentZ][currentX - 1] != -1) {
+				Piece* p = pieces[fields[currentZ][currentX - 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentX <= 6) {
+			if (fields[currentZ][currentX + 1] != -1) {
+				Piece* p = pieces[fields[currentZ][currentX + 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentZ <= 6 && currentX <= 6) {
+			if (fields[currentZ + 1][currentX + 1] != -1) {
+				Piece* p = pieces[fields[currentZ + 1][currentX + 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentZ >= 1 && currentX <= 6) {
+			if (fields[currentZ - 1][currentX + 1] != -1) {
+				Piece* p = pieces[fields[currentZ - 1][currentX + 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentZ >= 1 && currentX >= 1) {
+			if (fields[currentZ - 1][currentX - 1] != -1) {
+				Piece* p = pieces[fields[currentZ - 1][currentX - 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		if (currentZ <= 6 && currentX >= 1) {
+			if (fields[currentZ + 1][currentX - 1] != -1) {
+				Piece* p = pieces[fields[currentZ + 1][currentX - 1]];
+				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
 	int King::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
 			for (int k = 0; k < 15; k++) {
-				if (k != 4) {
-					if (pieces[k]->isCheckOccured(pieces, fields)) {
-						return k;
-					}
+				if (pieces[k]->check(pieces, fields)) {
+					return k;
 				}
 			}
 		}
 		else {
 			for (int k = 16; k < 32; k++) {
-				if (k != 28) {
-					if (pieces[k]->isCheckOccured(pieces, fields)) {
-						return k;
-					}
+				if (pieces[k]->check(pieces, fields)) {
+					return k;
 				}
 			}
 		}
 		return -1;
+	}
+	bool King::isMateOccured(Piece* pieces[32], int(&fields)[8][8]) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		int noCheckCells = 0;
+		if (currentZ <= 6) {
+			if (fields[currentZ + 1][currentX] == -1) {
+				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
+				fields[currentZ + 1][currentX] = -1;
+			}
+		}
+		if (currentZ >= 1) {
+			if (fields[currentZ - 1][currentX] == -1) {
+				fields[currentZ - 1][currentX] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
+				fields[currentZ - 1][currentX] = -1;
+			}
+		}
+		if (currentX >= 1) {
+			if (fields[currentZ][currentX - 1] == -1) {
+				fields[currentZ][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
+				fields[currentZ][currentX - 1] = -1;
+			}
+		}
+		if (currentX <= 6) {
+			if (fields[currentZ][currentX + 1] == -1) {
+				fields[currentZ][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
+				fields[currentZ][currentX + 1] = -1;
+			}
+		}
+		if (currentZ <= 6 && currentX <= 6) {
+			if (fields[currentZ + 1][currentX + 1] == -1) {
+				fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
+				fields[currentZ + 1][currentX + 1] = -1;
+			}
+		}
+		if (currentZ >= 1 && currentX <= 6) {
+			if (fields[currentZ - 1][currentX + 1] == -1) {
+				fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
+				fields[currentZ - 1][currentX + 1] = -1;
+			}
+		}
+		if (currentZ >= 1 && currentX >= 1) {
+			if (fields[currentZ - 1][currentX - 1] == -1) {
+				fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
+				fields[currentZ - 1][currentX - 1] = -1;
+			}
+		}
+		if (currentZ <= 6 && currentX >= 1) {
+			if (fields[currentZ + 1][currentX - 1] == -1) {
+				fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				if (isCheckOccured(pieces, fields) == -1) {
+					noCheckCells++;
+				}
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
+				fields[currentZ + 1][currentX - 1] = -1;
+			}
+		}
+		if (noCheckCells == 0) {
+			return true;
+		}
+		return false;
 	}
 }
