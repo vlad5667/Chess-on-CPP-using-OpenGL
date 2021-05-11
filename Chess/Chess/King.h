@@ -23,6 +23,8 @@ namespace ChessGame {
 		int isCheckOccured(Piece* pieces[32], int(&fields)[8][8]);
 		// Перевіряє, чи стався мат
 		bool isMateOccured(Piece* pieces[32], int(&fields)[8][8]);
+		// Перевіряє, чи можна закрити короля від шаху союзною фігурою
+		bool isSalvationPossible(Piece* pieces[32], int(&fields)[8][8], int checkPieceId);
 	};
 }
 

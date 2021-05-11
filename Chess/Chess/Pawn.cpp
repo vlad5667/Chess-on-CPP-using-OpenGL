@@ -6,39 +6,25 @@
 namespace ChessGame {
 	bool Pawn::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		if (getColor() == 'W') {
-			if (getFirstMove()) {
-				if (abs(zStart - mouseZCell) > 2 || xStart - mouseXCell != 0) {
-					return false;
-				}
-				else {
-					setFirstMove(false);
-					return true;
-				}
+			if (getFirstMove() && zStart - mouseZCell == 2 && xStart - mouseXCell == 0 && fields[zStart - 1][xStart] == -1 && fields[zStart - 2][xStart] == this->getId()) {
+				return true;
 			}
-			else if (abs(zStart - mouseZCell) > 1 || zStart - mouseZCell < 0 || xStart - mouseXCell != 0) {
-				return false;
+			else if (zStart - mouseZCell == 1 && xStart - mouseXCell == 0 && fields[zStart - 1][xStart] == this->getId()) {
+				return true;
 			}
 			else {
-				return true;
+				return false;
 			}
 		}
 		else {
-			if (getFirstMove()) {
-				// якщо х≥д некоректний
-				if (abs(zStart - mouseZCell) > 2 || xStart - mouseXCell != 0) {
-					return false;
-				}
-				else { // якщо х≥д коректний
-					setFirstMove(false);
-					return true;
-				}
-				// якщо це не перший х≥д, то перев≥р€Їмо коректн≥сть ходу на одну кл≥тинку вперед
-			}
-			else if (abs(zStart - mouseZCell) > 1 || zStart - mouseZCell > 0 || xStart - mouseXCell != 0) {
-				return false;
-			}
-			else { // якщо х≥д коректний
+			if (getFirstMove() && mouseZCell - zStart == 2 && xStart - mouseXCell == 0 && fields[zStart + 1][xStart] == -1 && fields[zStart + 2][xStart] == this->getId()) {
 				return true;
+			}
+			else if (mouseZCell - zStart == 1 && xStart - mouseXCell == 0 && fields[zStart + 1][xStart] == this->getId()) {
+				return true;
+			}
+			else {
+				return false;
 			}
 		}
 	}
@@ -125,20 +111,87 @@ namespace ChessGame {
 	}
 	bool Pawn::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (this->isBeaten()) {
+			return false;
+		}
 		if (currentZ >= 1 && currentX >= 1 && currentZ <= 6 && currentX <= 6) {
 			if (getColor() == 'W') {
 				if (fields[currentZ - 1][currentX + 1] == capturePieceId) {
+					fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
+					fields[currentZ][currentX] = -1;
+					int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+					int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+					fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
+					fields[currentZ - 1][currentX + 1] = capturePieceId;
+					if (getColor() == 'W') {
+						if (checkW != -1) {
+							return false;
+						}
+					}
+					else {
+						if (checkB != -1) {
+							return false;
+						}
+					}
 					return true;
 				}
 				if (fields[currentZ - 1][currentX - 1]  == capturePieceId) {
+					fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
+					fields[currentZ][currentX] = -1;
+					int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+					int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+					fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
+					fields[currentZ - 1][currentX - 1] = capturePieceId;
+					if (getColor() == 'W') {
+						if (checkW != -1) {
+							return false;
+						}
+					}
+					else {
+						if (checkB != -1) {
+							return false;
+						}
+					}
 					return true;
 				}
 			}
 			else {
 				if (fields[currentZ + 1][currentX + 1] == capturePieceId) {
+					fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
+					fields[currentZ][currentX] = -1;
+					int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+					int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+					fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
+					fields[currentZ + 1][currentX + 1] = capturePieceId;
+					if (getColor() == 'W') {
+						if (checkW != -1) {
+							return false;
+						}
+					}
+					else {
+						if (checkB != -1) {
+							return false;
+						}
+					}
 					return true;
 				}
 				if (fields[currentZ + 1][currentX - 1] == capturePieceId) {
+					fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
+					fields[currentZ][currentX] = -1;
+					int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+					int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+					fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
+					fields[currentZ + 1][currentX - 1] = capturePieceId;
+					if (getColor() == 'W') {
+						if (checkW != -1) {
+							return false;
+						}
+					}
+					else {
+						if (checkB != -1) {
+							return false;
+						}
+					}
 					return true;
 				}
 			}

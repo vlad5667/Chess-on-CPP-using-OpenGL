@@ -1,5 +1,7 @@
 #include "King.h"
 #include "Rook.h"
+#include "Bishop.h"
+#include "Queen.h"
 #include "Knight.h"
 #include <cmath>
 
@@ -13,7 +15,7 @@ namespace ChessGame {
 		}
 	}
 	bool King::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
-		if (abs(zStart - mouseZCell) == 1 || abs(xStart - mouseXCell) == 1) {
+		if (abs(zStart - mouseZCell) <= 1 && abs(xStart - mouseXCell) <= 1) {
 			return true;
 		}
 		return false;
@@ -122,15 +124,19 @@ namespace ChessGame {
 	int King::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
 			for (int k = 0; k < 15; k++) {
-				if (pieces[k]->check(pieces, fields)) {
-					return k;
+				if (!pieces[k]->isBeaten()) {
+					if (pieces[k]->check(pieces, fields)) {
+						return k;
+					}
 				}
 			}
 		}
 		else {
 			for (int k = 16; k < 32; k++) {
-				if (pieces[k]->check(pieces, fields)) {
-					return k;
+				if (!pieces[k]->isBeaten()) {
+					if (pieces[k]->check(pieces, fields)) {
+						return k;
+					}
 				}
 			}
 		}
@@ -140,42 +146,869 @@ namespace ChessGame {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		if (currentZ <= 6) {
 			if (fields[currentZ + 1][currentX] == capturePieceId) {
+				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
+				fields[currentZ + 1][currentX] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentZ >= 1) {
 			if (fields[currentZ - 1][currentX] == capturePieceId) {
+				fields[currentZ - 1][currentX] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
+				fields[currentZ - 1][currentX] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentX >= 1) {
 			if (fields[currentZ][currentX - 1] == capturePieceId) {
+				fields[currentZ][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
+				fields[currentZ][currentX - 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentX <= 6) {
 			if (fields[currentZ][currentX + 1] == capturePieceId) {
+				fields[currentZ][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
+				fields[currentZ][currentX + 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentZ <= 6 && currentX <= 6) {
 			if (fields[currentZ + 1][currentX + 1] == capturePieceId) {
+				fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
+				fields[currentZ + 1][currentX + 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkW != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkB != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentZ >= 1 && currentX <= 6) {
 			if (fields[currentZ - 1][currentX + 1] == capturePieceId) {
+				fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
+				fields[currentZ - 1][currentX + 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentZ >= 1 && currentX >= 1) {
 			if (fields[currentZ - 1][currentX - 1] == capturePieceId) {
+				fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
+				fields[currentZ - 1][currentX - 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
 			}
 		}
 		if (currentZ <= 6 && currentX >= 1) {
 			if (fields[currentZ + 1][currentX - 1] == capturePieceId) {
+				fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
+				fields[currentZ + 1][currentX - 1] = capturePieceId;
+				if (getColor() == 'W') {
+					if (checkB != -1) {
+						return false;
+					}
+				}
+				else {
+					if (checkW != -1) {
+						return false;
+					}
+				}
 				return true;
+			}
+		}
+		return false;
+	}
+	bool King::isSalvationPossible(Piece* pieces[32], int(&fields)[8][8], int checkPieceId) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		int checkPieceZ = pieces[checkPieceId]->getZCenter() + 3, checkPieceX = pieces[checkPieceId]->getXCenter() + 3;
+		if (typeid(*pieces[checkPieceId]) == typeid(Rook)) {
+			for (int z = currentZ - 1, x = currentX; z > checkPieceZ; z--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		else if (typeid(*pieces[checkPieceId]) == typeid(Bishop)) {
+			for (int z = currentZ + 1, x = currentX + 1; z < checkPieceZ; z++, x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		else if (typeid(*pieces[checkPieceId]) == typeid(Queen)) {
+			for (int z = currentZ - 1, x = currentX; z > checkPieceZ; z--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ + 1, x = currentX + 1; z < checkPieceZ; z++, x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
+				if (fields[z][x] == -1) {
+					if (this->getColor() == 'W') {
+						for (int k = 16; k <= 31; k++) {
+							if (!pieces[k]->isBeaten() && k != 28) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+					else {
+						for (int k = 0; k <= 15; k++) {
+							if (!pieces[k]->isBeaten() && k != 4) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
+									fields[z][x] = fields[zStart][xStart];
+									fields[zStart][xStart] = -1;
+									int check = this->isCheckOccured(pieces, fields);
+									fields[zStart][xStart] = fields[z][x];
+									fields[z][x] = -1;
+									if (check != -1) {
+										continue;
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					return false;
+				}
 			}
 		}
 		return false;
@@ -274,95 +1107,10 @@ namespace ChessGame {
 		if (noCheckCells == 0) {
 			int checkPieceId = isCheckOccured(pieces, fields);
 			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
-				return true;
-			}
-
-			//TODO Сделать проверку на закрытие короля союзной фигурой от мата.
-
-			int checkPieceZ = pieces[checkPieceId]->getZCenter() + 3, checkPieceX = pieces[checkPieceId]->getXCenter() + 3;
-			if (typeid(*pieces[checkPieceId]) == typeid(Rook)) {
-				if (checkPieceZ < currentZ) {
-					for (int z = currentZ - 1; z > checkPieceZ; z--) {
-						if (this->getColor() == 'W') {
-							for (int k = 16; k <= 31; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
-									return false;
-								}
-							}
-						}
-						else {
-							for (int k = 0; k <= 15; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
-									return false;
-								}
-							}
-						}
-					}
-					return true;
+				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
+					return false;
 				}
-				if (checkPieceZ > currentZ) {
-					for (int z = currentZ + 1; z < checkPieceZ; z++) {
-						if (this->getColor() == 'W') {
-							for (int k = 16; k <= 31; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
-									return false;
-								}
-							}
-						}
-						else {
-							for (int k = 0; k <= 15; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
-									return false;
-								}
-							}
-						}
-					}
-					return true;
-				}
-				if (checkPieceX > currentX) {
-					for (int x = currentX + 1; x < checkPieceX; x++) {
-						if (this->getColor() == 'W') {
-							for (int k = 16; k <= 31; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
-									return false;
-								}
-							}
-						}
-						else {
-							for (int k = 0; k <= 15; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
-									return false;
-								}
-							}
-						}
-					}
-					return true;
-				}
-				if (checkPieceX < currentX) {
-					for (int x = currentX - 1; x > checkPieceX; x--) {
-						if (this->getColor() == 'W') {
-							for (int k = 16; k <= 31; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
-									return false;
-								}
-							}
-						}
-						else {
-							for (int k = 0; k <= 15; k++) {
-								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
-								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
-									return false;
-								}
-							}
-						}
-					}
+				if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
 					return true;
 				}
 			}

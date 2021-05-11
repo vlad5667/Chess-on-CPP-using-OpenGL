@@ -73,16 +73,20 @@ namespace ChessGame {
     }
     bool Piece::isCapturePossible(Piece* pieces[32], int(&fields)[8][8]) {
         if (this->getColor() == 'W') {
-            for (int k = 0; k < 15; k++) {
-                if (pieces[k]->capture(pieces, fields, this->getId())) {
-                    return true;
+            for (int k = 0; k < 16; k++) {
+                if (!pieces[k]->isBeaten()) {
+                    if (pieces[k]->capture(pieces, fields, this->getId())) {
+                        return true;
+                    }
                 }
             }
         }
         else {
             for (int k = 16; k < 32; k++) {
-                if (pieces[k]->capture(pieces, fields, this->getId())) {
-                    return true;
+                if (!pieces[k]->isBeaten()) {
+                    if (pieces[k]->capture(pieces, fields, this->getId())) {
+                        return true;
+                    }
                 }
             }
         }

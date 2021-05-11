@@ -13,6 +13,7 @@ namespace ChessGame {
 		float radius;
 		GLuint texture = 0;
 		bool firstMove = true;
+		bool beaten = false;
 	public:
 		Piece(int id, char color, float xCenter, float yCenter, float zCenter,
 			float xSize, float ySize, float zSize,
@@ -32,6 +33,8 @@ namespace ChessGame {
 		void setRadius(float radius) { this->radius = radius; }
 		void setFirstMove(bool firstMove) { this->firstMove = firstMove; }
 		bool getFirstMove() { return firstMove; }
+		void setBeaten(bool beaten) { this->beaten = beaten; }
+		bool isBeaten() { return beaten; }
 
 		virtual void draw() override;
 		// Перевіряє хід на коректність
