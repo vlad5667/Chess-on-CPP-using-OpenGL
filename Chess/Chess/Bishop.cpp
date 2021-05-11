@@ -3,42 +3,39 @@
 #include <cmath>
 
 namespace ChessGame {
-	bool Bishop::correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
-		// Якщо хід коректний
+	bool Bishop::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		if (abs(zStart - mouseZCell) == abs(xStart - mouseXCell)) {
 			if (mouseXCell < xStart&& mouseZCell < zStart) {
 				for (int x = xStart - 1, z = zStart - 1; x > mouseXCell && z > mouseZCell; x--, z--) {
 					if (static_cast<Bishop*>(pieces[fields[z][x]]) != this && fields[z][x] != -1) {
-						goto skipBishop;
+						return false;
 					}
 				}
 			}
 			else if (mouseXCell < xStart && mouseZCell > zStart) {
 				for (int x = xStart - 1, z = zStart + 1; x > mouseXCell && z < mouseZCell; x--, z++) {
 					if (static_cast<Bishop*>(pieces[fields[z][x]]) != this && fields[z][x] != -1) {
-						goto skipBishop;
+						return false;
 					}
 				}
 			}
 			else if (mouseXCell > xStart && mouseZCell < zStart) {
 				for (int x = xStart + 1, z = zStart - 1; x < mouseXCell && z > mouseZCell; x++, z--) {
 					if (static_cast<Bishop*>(pieces[fields[z][x]]) != this && fields[z][x] != -1) {
-						goto skipBishop;
+						return false;
 					}
 				}
 			}
 			else if (mouseXCell > xStart && mouseZCell > zStart) {
 				for (int x = xStart + 1, z = zStart + 1; x < mouseXCell && z < mouseZCell; x++, z++) {
 					if (static_cast<Bishop*>(pieces[fields[z][x]]) != this && fields[z][x] != -1) {
-						goto skipBishop;
+						return false;
 					}
 				}
 			}
 			return true;
 		}
 		else { // Якщо хід некоректний
-		skipBishop:
-			movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 			return false;
 		}
 	}
@@ -79,16 +76,16 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	int Bishop::check(Piece* pieces[32], int(&fields)[8][8]) {
+	bool Bishop::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		if (this->getId() != fields[currentZ][currentX]) {
-			return 0;
+			return false;
 		}
 		for (int z = currentZ + 1, x = currentX + 1; z < 8 && x < 8; z++, x++) {
 			if (fields[z][x] != -1) {
 				Piece* p = pieces[fields[z][x]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 				else {
 					break;
@@ -99,7 +96,7 @@ namespace ChessGame {
 			if (fields[z][x] != -1) {
 				Piece* p = pieces[fields[z][x]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 				else {
 					break;
@@ -110,7 +107,7 @@ namespace ChessGame {
 			if (fields[z][x] != -1) {
 				Piece* p = pieces[fields[z][x]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 				else {
 					break;
@@ -121,13 +118,49 @@ namespace ChessGame {
 			if (fields[z][x] != -1) {
 				Piece* p = pieces[fields[z][x]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 				else {
 					break;
 				}
 			}
 		}
-		return 0;
+		return false;
+	}
+	bool Bishop::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		for (int z = currentZ + 1, x = currentX + 1; z < 8 && x < 8; z++, x++) {
+			if (fields[z][x] == capturePieceId) {
+				return true;
+			}
+			else {
+				break;
+			}
+		}
+		for (int z = currentZ + 1, x = currentX - 1; z < 8 && x >= 0; z++, x--) {
+			if (fields[z][x] == capturePieceId) {
+				return true;
+			}
+			else {
+				break;
+			}
+		}
+		for (int z = currentZ - 1, x = currentX + 1; z >= 0 && x < 8; z--, x++) {
+			if (fields[z][x] == capturePieceId) {
+				return true;
+			}
+			else {
+				break;
+			}
+		}
+		for (int z = currentZ - 1, x = currentX - 1; z >= 0 && x >= 0; z--, x--) {
+			if (fields[z][x] == capturePieceId) {
+				return true;
+			}
+			else {
+				break;
+			}
+		}
+		return false;
 	}
 }

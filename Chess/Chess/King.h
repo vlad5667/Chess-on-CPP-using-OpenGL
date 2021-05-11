@@ -13,11 +13,15 @@ namespace ChessGame {
 				xSize, ySize, zSize,
 				diffColor, ambiColor, specColor, shininess, radius) { }
 
-		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
+		virtual bool isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
-		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) override;
+		// Перевіряє, чи сталося рокірування
 		bool isCastlingOccured(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX);
+		// Перевіряє, чи стався шах та повертає ідентифікатор фігури, що його спричинила
 		int isCheckOccured(Piece* pieces[32], int(&fields)[8][8]);
+		// Перевіряє, чи стався мат
 		bool isMateOccured(Piece* pieces[32], int(&fields)[8][8]);
 	};
 }

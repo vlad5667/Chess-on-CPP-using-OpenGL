@@ -1,11 +1,11 @@
 #include "King.h"
 #include "Rook.h"
+#include "Knight.h"
 #include <cmath>
 
 namespace ChessGame {
-	bool King::correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
+	bool King::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
 		if (abs(zStart - mouseZCell) > 1 || abs(xStart - mouseXCell) > 1) {
-			movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 			return false;
 		}
 		else {
@@ -48,16 +48,16 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	int King::check(Piece* pieces[32], int(&fields)[8][8]) {
+	bool King::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		if (this->getId() != fields[currentZ][currentX]) {
-			return 0;
+			return false;
 		}
 		if (currentZ <= 6) {
 			if (fields[currentZ + 1][currentX] != -1) {
 				Piece* p = pieces[fields[currentZ + 1][currentX]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -65,7 +65,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX] != -1) {
 				Piece* p = pieces[fields[currentZ - 1][currentX]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -73,7 +73,7 @@ namespace ChessGame {
 			if (fields[currentZ][currentX - 1] != -1) {
 				Piece* p = pieces[fields[currentZ][currentX - 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -81,7 +81,7 @@ namespace ChessGame {
 			if (fields[currentZ][currentX + 1] != -1) {
 				Piece* p = pieces[fields[currentZ][currentX + 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -89,7 +89,7 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX + 1] != -1) {
 				Piece* p = pieces[fields[currentZ + 1][currentX + 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -97,7 +97,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX + 1] != -1) {
 				Piece* p = pieces[fields[currentZ - 1][currentX + 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -105,7 +105,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX - 1] != -1) {
 				Piece* p = pieces[fields[currentZ - 1][currentX - 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -113,11 +113,11 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX - 1] != -1) {
 				Piece* p = pieces[fields[currentZ + 1][currentX - 1]];
 				if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
-					return 1;
+					return true;
 				}
 			}
 		}
-		return 0;
+		return false;
 	}
 	int King::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
@@ -135,6 +135,50 @@ namespace ChessGame {
 			}
 		}
 		return -1;
+	}
+	bool King::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
+		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		if (currentZ <= 6) {
+			if (fields[currentZ + 1][currentX] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentZ >= 1) {
+			if (fields[currentZ - 1][currentX] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentX >= 1) {
+			if (fields[currentZ][currentX - 1] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentX <= 6) {
+			if (fields[currentZ][currentX + 1] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentZ <= 6 && currentX <= 6) {
+			if (fields[currentZ + 1][currentX + 1] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentZ >= 1 && currentX <= 6) {
+			if (fields[currentZ - 1][currentX + 1] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentZ >= 1 && currentX >= 1) {
+			if (fields[currentZ - 1][currentX - 1] == capturePieceId) {
+				return true;
+			}
+		}
+		if (currentZ <= 6 && currentX >= 1) {
+			if (fields[currentZ + 1][currentX - 1] == capturePieceId) {
+				return true;
+			}
+		}
+		return false;
 	}
 	bool King::isMateOccured(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
@@ -228,7 +272,100 @@ namespace ChessGame {
 			}
 		}
 		if (noCheckCells == 0) {
-			return true;
+			int checkPieceId = isCheckOccured(pieces, fields);
+			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
+				return true;
+			}
+
+			//TODO Сделать проверку на закрытие короля союзной фигурой от мата.
+
+			int checkPieceZ = pieces[checkPieceId]->getZCenter() + 3, checkPieceX = pieces[checkPieceId]->getXCenter() + 3;
+			if (typeid(*pieces[checkPieceId]) == typeid(Rook)) {
+				if (checkPieceZ < currentZ) {
+					for (int z = currentZ - 1; z > checkPieceZ; z--) {
+						if (this->getColor() == 'W') {
+							for (int k = 16; k <= 31; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
+									return false;
+								}
+							}
+						}
+						else {
+							for (int k = 0; k <= 15; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
+									return false;
+								}
+							}
+						}
+					}
+					return true;
+				}
+				if (checkPieceZ > currentZ) {
+					for (int z = currentZ + 1; z < checkPieceZ; z++) {
+						if (this->getColor() == 'W') {
+							for (int k = 16; k <= 31; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
+									return false;
+								}
+							}
+						}
+						else {
+							for (int k = 0; k <= 15; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, currentX)) {
+									return false;
+								}
+							}
+						}
+					}
+					return true;
+				}
+				if (checkPieceX > currentX) {
+					for (int x = currentX + 1; x < checkPieceX; x++) {
+						if (this->getColor() == 'W') {
+							for (int k = 16; k <= 31; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
+									return false;
+								}
+							}
+						}
+						else {
+							for (int k = 0; k <= 15; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
+									return false;
+								}
+							}
+						}
+					}
+					return true;
+				}
+				if (checkPieceX < currentX) {
+					for (int x = currentX - 1; x > checkPieceX; x--) {
+						if (this->getColor() == 'W') {
+							for (int k = 16; k <= 31; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
+									return false;
+								}
+							}
+						}
+						else {
+							for (int k = 0; k <= 15; k++) {
+								int zStart = pieces[k]->getZCenter() + 3, xStart = pieces[k]->getXCenter() + 3;
+								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, currentZ, x)) {
+									return false;
+								}
+							}
+						}
+					}
+					return true;
+				}
+			}
 		}
 		return false;
 	}

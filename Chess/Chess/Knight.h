@@ -13,9 +13,10 @@ namespace ChessGame {
 				xSize, ySize, zSize,
 				diffColor, ambiColor, specColor, shininess, radius) { }
 
-		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
+		virtual bool isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
-		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) override;
 	};
 }
 
