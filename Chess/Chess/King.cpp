@@ -20,7 +20,7 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	bool King::isCastlingOccured(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) {
+	bool King::isCastlingOccurred(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell, int currentZ, int currentX) {
 		std::cout << getFirstMove() << std::endl;
 		if (abs(zStart - mouseZCell) == 0 && (mouseXCell == 0 || mouseXCell == 7) && getFirstMove()) {
 			if (typeid(*pieces[fields[mouseZCell][mouseXCell]]) == typeid(Rook) && pieces[fields[mouseZCell][mouseXCell]]->getFirstMove()) {
@@ -121,7 +121,7 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	int King::isCheckOccured(Piece* pieces[32], int(&fields)[8][8]) {
+	int King::isCheckOccurred(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
 			for (int k = 0; k < 15; k++) {
 				if (!pieces[k]->isBeaten()) {
@@ -148,8 +148,8 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX] == capturePieceId) {
 				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
 				fields[currentZ + 1][currentX] = capturePieceId;
 				if (getColor() == 'W') {
@@ -169,8 +169,8 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX] == capturePieceId) {
 				fields[currentZ - 1][currentX] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
 				fields[currentZ - 1][currentX] = capturePieceId;
 				if (getColor() == 'W') {
@@ -190,8 +190,8 @@ namespace ChessGame {
 			if (fields[currentZ][currentX - 1] == capturePieceId) {
 				fields[currentZ][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
 				fields[currentZ][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -211,8 +211,8 @@ namespace ChessGame {
 			if (fields[currentZ][currentX + 1] == capturePieceId) {
 				fields[currentZ][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
 				fields[currentZ][currentX + 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -232,8 +232,8 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX + 1] == capturePieceId) {
 				fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
 				fields[currentZ + 1][currentX + 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -253,8 +253,8 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX + 1] == capturePieceId) {
 				fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
 				fields[currentZ - 1][currentX + 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -274,8 +274,8 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX - 1] == capturePieceId) {
 				fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
 				fields[currentZ - 1][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -295,8 +295,8 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX - 1] == capturePieceId) {
 				fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				int checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-				int checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
 				fields[currentZ + 1][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
@@ -327,7 +327,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -345,7 +345,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -370,7 +370,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -388,7 +388,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -413,7 +413,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -431,7 +431,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -456,7 +456,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -474,7 +474,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -501,7 +501,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -519,7 +519,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -544,7 +544,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -562,7 +562,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -587,7 +587,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -605,7 +605,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -630,7 +630,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -648,7 +648,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -675,7 +675,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -693,7 +693,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -718,7 +718,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -736,7 +736,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -761,7 +761,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -779,7 +779,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -804,7 +804,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -822,7 +822,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -847,7 +847,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -865,7 +865,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -890,7 +890,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -908,7 +908,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -933,7 +933,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -951,7 +951,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -976,7 +976,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -994,7 +994,7 @@ namespace ChessGame {
 								if (pieces[k]->isMovePossible(pieces, fields, zStart, xStart, z, x)) {
 									fields[z][x] = fields[zStart][xStart];
 									fields[zStart][xStart] = -1;
-									int check = this->isCheckOccured(pieces, fields);
+									int check = this->isCheckOccurred(pieces, fields);
 									fields[zStart][xStart] = fields[z][x];
 									fields[z][x] = -1;
 									if (check != -1) {
@@ -1013,14 +1013,14 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	bool King::isMateOccured(Piece* pieces[32], int(&fields)[8][8]) {
+	bool King::isRetreatPossible(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
 		int noCheckCells = 0;
 		if (currentZ <= 6) {
 			if (fields[currentZ + 1][currentX] == -1) {
 				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
@@ -1031,7 +1031,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX] == -1) {
 				fields[currentZ - 1][currentX] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
@@ -1042,7 +1042,7 @@ namespace ChessGame {
 			if (fields[currentZ][currentX - 1] == -1) {
 				fields[currentZ][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
@@ -1053,7 +1053,7 @@ namespace ChessGame {
 			if (fields[currentZ][currentX + 1] == -1) {
 				fields[currentZ][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
@@ -1064,7 +1064,7 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX + 1] == -1) {
 				fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
@@ -1075,7 +1075,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX + 1] == -1) {
 				fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
@@ -1086,7 +1086,7 @@ namespace ChessGame {
 			if (fields[currentZ - 1][currentX - 1] == -1) {
 				fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
@@ -1097,15 +1097,21 @@ namespace ChessGame {
 			if (fields[currentZ + 1][currentX - 1] == -1) {
 				fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
 				fields[currentZ][currentX] = -1;
-				if (isCheckOccured(pieces, fields) == -1) {
+				if (isCheckOccurred(pieces, fields) == -1) {
 					noCheckCells++;
 				}
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
 				fields[currentZ + 1][currentX - 1] = -1;
 			}
 		}
-		if (noCheckCells == 0) {
-			int checkPieceId = isCheckOccured(pieces, fields);
+		if (!noCheckCells) {
+			return false;
+		}
+		return true;
+	}
+	bool King::isMateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
+		if (!this->isRetreatPossible(pieces, fields)) {
+			int checkPieceId = isCheckOccurred(pieces, fields);
 			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
 				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
 					return false;

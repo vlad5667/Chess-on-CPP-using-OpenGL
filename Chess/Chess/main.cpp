@@ -43,6 +43,7 @@ void on_timer(int value) {
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
 	glutInit(&argc, argv);
+	scene = new Scene();
 	glutInitWindowSize(800, 600);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("Chess");
@@ -53,7 +54,6 @@ int main(int argc, char* argv[]) {
 	glutKeyboardFunc(on_keyboard); // реєструємо функцію, яка відповідає за натискання клавіш
 	glutSpecialFunc(on_special);   // реєструємо функцію, яка відповідає за натискання спеціальних клавіш
 	glutTimerFunc(25, on_timer, 0);
-	scene = new Scene();
 	glutMainLoop();
 	delete scene;
 	return(0);

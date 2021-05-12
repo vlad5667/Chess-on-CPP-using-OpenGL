@@ -18,9 +18,9 @@ namespace ChessGame {
 		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) override;
 		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) override;
 		// Перевіряє, чисталося взяття на проході
-		bool isEnPassantOccured(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
+		bool isEnPassantOccurred(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
 		// Перевіряє, чи сталося перетворення пішака
-		bool isPromotionOccured(int mouseZCell, int mouseXCell);
+		bool isPromotionOccurred(int mouseZCell, int mouseXCell);
 	};
 }
 

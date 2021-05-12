@@ -2,8 +2,10 @@
 #include <Windows.h>
 #include <iostream>
 #include <gl/glut.h>
+#include <algorithm>
 #include <string>
 #include <ctime>
+#include <fstream>
 #include "Scene.h"
 #include "Cube.h"
 #include "utils.h"
@@ -12,24 +14,128 @@ namespace ChessGame {
 	using namespace GraphUtils;
 	std::string firstPlayerName = "", secondPlayerName = ""; // «м≥нн≥, що збер≥гають ≥мена гравц≥в
 	std::string whitePlayer, blackPlayer;
+	std::string timeString = "";
 
-	bool inputFirstPlayerNameMode = true; // «м≥нна, що сигнал≥зуЇ про режим введенн€ ≥мен≥ першого гравц€
-	bool inputSecondPlayerNameMode = false; // «м≥нна, що сигнал≥зуЇ про режим введенн€ ≥мен≥ другого гравц€
-	bool selectDifficultyMode = false; // «м≥нна, що сигнал≥зуЇ про режим вибору складност≥
-	bool gameMode = false; // «м≥нна, що сигнал≥зуЇ про режим гри
+	bool sortComp(recordRow A, recordRow B) {
+		std::string timeA = "";
+		timeA += A.time[0];
+		timeA += A.time[1];
+		int timeInSecondsA = atoi(timeA.c_str()) * 60;
+		timeA = "";
+		timeA += A.time[3];
+		timeA += A.time[4];
+		timeInSecondsA += atoi(timeA.c_str());
+		std::string timeB = "";
+		timeB += B.time[0];
+		timeB += B.time[1];
+		int timeInSecondsB = atoi(timeB.c_str()) * 60;
+		timeB = "";
+		timeB += B.time[3];
+		timeB += B.time[4];
+		timeInSecondsB += atoi(timeB.c_str());
+		return timeInSecondsA > timeInSecondsB;
+	}
 
-	int difficulty; // «м≥нна, що вказуЇ на складн≥сть гри
+	void Scene::readRecords() {
+		std::ifstream in("records.txt");
+		if (!in.is_open()) {
+			writeRecords();
+		}
+		recordsTable.clear();
+		recordsEasy.clear();
+		recordsNormal.clear();
+		recordsHard.clear();
+		std::string row;
+		int dif;
+		while (std::getline(in, row)) {
+			recordsTable.push_back(row);
+			if (row[0] == 'E') {
+				dif = 1;
+			}
+			else if (row[0] == 'N') {
+				dif = 2;
+			}
+			else if (row[0] == 'H') {
+				dif = 3;
+			}
+			if (isdigit(row[0])) {
+				std::string firstName = "", secondName = "", winner = "", steps = "", time = "";
+				int i = 2;
+				while (row[i] != '-') {
+					firstName += row[i];
+					i++;
+				}
+				i++;
+				while (row[i] != ' ' && row[i + 1] != '|') {
+					secondName += row[i];
+					i++;
+				}
+				i += 12;
+				while (row[i] != ' ' && row[i + 1] != '|') {
+					winner += row[i];
+					i++;
+				}
+				i += 3;
+				while (row[i] != ' ' && row[i + 1] != '|') {
+					steps += row[i];
+					i++;
+				}
+				i += 3;
+				while (row[i] != '\0') {
+					time += row[i];
+					i++;
+				}
+				recordRow record(firstName, secondName, winner, steps, time);
+				switch (dif) {
+				case 1:
+					recordsEasy.push_back(record);
+					break;
+				case 2:
+					recordsNormal.push_back(record);
+					break;
+				case 3:
+					recordsHard.push_back(record);
+					break;
+				}
+				
+			}
+		}
+		in.close();
+	}
 
-	bool collision = false; // «м≥нна, що сигнал≥зуЇ про кол≥з≥ю з ≥ншою ф≥гурою
-	int delW = 0, delB = 0; // «м≥нн≥, що задають координату ’ дл€ побитих ф≥гур
-	bool castlingOccuredW = false; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ б≥лих
-	bool castlingOccuredB = false; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ чорних
-	int checkW = -1, checkB = -1; // «м≥нн≥, що сигнал≥зують, ставс€ шах чи н≥
-	bool mateOccuredW = false, mateOccuredB = false; // «м≥нн≥, що сигнал≥зують, ставс€ мат чи н≥
-	int prevPieceId = 0; // «м≥нна, що збер≥гаЇ ≥дентиф≥катор ф≥гура, що ходила до цього (потр≥бно дл€ вз€тт€ на проход≥)
-	int promotionMode = 0; // «м≥нна, що сигнал≥зуЇ про виб≥р ф≥гури дл€ перетворенн€ п≥шака
+	void Scene::writeRecords() {
+		std::ofstream out("records.txt");
+		int i = 1;
+		out << "------------------------------\nEASY\n";
+		for (auto& record : recordsEasy) {
+			if (i > 5) break;
+			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+		}
+		i = 1;
+		out << "------------------------------\nNORMAL\n";
+		for (auto& record : recordsNormal) {
+			if (i > 5) break;
+			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+		}
+		i = 1;
+		out << "------------------------------\nHARD\n";
+		for (auto& record : recordsHard) {
+			if (i > 5) break;
+			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+		}
+		out.close();
+	}
+
+	void Scene::clearRecords() {
+		recordsEasy.clear();
+		recordsNormal.clear();
+		recordsHard.clear();
+		std::ofstream out("records.txt");
+		out.close();
+	}
 
 	Scene::Scene() {
+		readRecords();
 		initialize();
 	}
 	Scene::~Scene() {
@@ -152,22 +258,25 @@ namespace ChessGame {
 			std::cout << "\n";
 		}
 		// ¬становленн€ значень вс≥х зм≥нних за замовчуванн€м
+		timeString = "";
+		time = 0;
+		steps = 0;
 		collision = false;
 		delW = 0, delB = 0;
-		castlingOccuredW = false;
-		castlingOccuredB = false;
+		castlingOccurredW = false;
+		castlingOccurredB = false;
 		checkW = -1, checkB = -1;
-		mateOccuredW = false;
-		mateOccuredB = false;
+		mateOccurredW = false;
+		mateOccurredB = false;
 		prevPieceId = 0;
 		promotionMode = 0;
 		whiteMove = true;
 		switch (difficulty) {
 		case 2:
-			firstPlayerTime = secondPlayerTime = 120 * 60;
+			whitePlayerTime = blackPlayerTime = 120 * 60;
 			break;
 		case 3:
-			firstPlayerTime = secondPlayerTime = 60 * 60;
+			whitePlayerTime = blackPlayerTime = 60 * 60;
 		}
 		distZ = -13;
 		angleX = 0;
@@ -268,6 +377,7 @@ namespace ChessGame {
 		if (promotionMode > 1) {
 			int id = prevPieceId;
 			float x = pieces[id]->getXCenter(), z = pieces[id]->getZCenter();
+			delete pieces[id];
 			if (pieces[id]->getColor() == 'W') {
 				GLuint texture;
 				switch (promotionMode) {
@@ -332,13 +442,12 @@ namespace ChessGame {
 		else if (checkB != -1) {
 			state = "Check black";
 		}
-		if (mateOccuredW) {
+		if (mateOccurredW) {
 			state = "Mate white";
 		}
-		else if (mateOccuredB) {
+		else if (mateOccurredB) {
 			state = "Mate black";
 		}
-		interfaceNavigation = "F2 - restart game";
 
 		glViewport(0, 0, width, height);
 
@@ -354,8 +463,12 @@ namespace ChessGame {
 		glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-		
-		glClearColor(0, 0.5, 0.5, 0);
+		if (mateOccurredW || mateOccurredB) {
+			glClearColor(0, 0.7, 0.7, 0);
+		}
+		else {
+			glClearColor(0, 0.5, 0.5, 0);
+		}
 
 		// ќчищуЇмо буфери:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -368,63 +481,95 @@ namespace ChessGame {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glColor3f(1, 1, 0); // жовтий текст
-		if (inputFirstPlayerNameMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input first player name", 0.45, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.45, 0.88);
+		if (currentMode == inputFirstPlayerNameMode) {
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input first player name", 0.43, 0.6);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.47, 0.55);
 		}
-		if (inputSecondPlayerNameMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input second player name", 0.45, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.45, 0.88);
+		if (currentMode == inputSecondPlayerNameMode) {
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input second player name", 0.42, 0.6);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.47, 0.55);
 		}
-		if (selectDifficultyMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Select difficulty", 0.45, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "1 - Easy", 0.45, 0.88);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "2 - Normal", 0.45, 0.81);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "3 - Hard", 0.45, 0.74);
+		if (currentMode == selectDifficultyMode) {
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Select difficulty", 0.46, 0.6);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "1 - Easy", 0.47, 0.55);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "2 - Normal", 0.47, 0.48);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "3 - Hard", 0.47, 0.41);
 		}
-		if (gameMode) {
-			std::string time;
-			if (firstPlayerTime / 60 < 10) {
-				time = "0" + std::to_string(firstPlayerTime / 60);
+		if (currentMode == recordsMode) {
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "C - clear records", 0.01, 0.95);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "RECORDS", 0.46, 0.92);
+			for (int i = 0; i < recordsTable.size(); i++) {
+				double y = 0.88 - (4 * i) / 100.0;
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, recordsTable[i].c_str(), 0.35, y);
+			}
+ 		}
+		if (currentMode == gameMode) {
+			if (whitePlayerTime / 60 < 10) {
+				timeString = "0" + std::to_string(whitePlayerTime / 60);
 			}
 			else {
-				time = std::to_string(firstPlayerTime / 60);
+				timeString = std::to_string(whitePlayerTime / 60);
 			}
-			if (firstPlayerTime - firstPlayerTime / 60 * 60 < 10) {
-				time += ":0" + std::to_string(firstPlayerTime - firstPlayerTime / 60 * 60);
+			if (whitePlayerTime - whitePlayerTime / 60 * 60 < 10) {
+				timeString += ":0" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
 			}
 			else {
-				time += ":" + std::to_string(firstPlayerTime - firstPlayerTime / 60 * 60);
+				timeString += ":" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
 			}
-			std::string firstPlayerTimeString = "White player time: " + time;
+			std::string whitePlayerTimeString = "White player time: " + timeString;
 
-			if (secondPlayerTime / 60 < 10) {
-				time = "0" + std::to_string(secondPlayerTime / 60);
+			if (blackPlayerTime / 60 < 10) {
+				timeString = "0" + std::to_string(blackPlayerTime / 60);
 			}
 			else {
-				time = std::to_string(secondPlayerTime / 60);
+				timeString = std::to_string(blackPlayerTime / 60);
 			}
-			if (secondPlayerTime - secondPlayerTime / 60 * 60 < 10) {
-				time += ":0" + std::to_string(secondPlayerTime - secondPlayerTime / 60 * 60);
+			if (blackPlayerTime - blackPlayerTime / 60 * 60 < 10) {
+				timeString += ":0" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
 			}
 			else {
-				time += ":" + std::to_string(secondPlayerTime - secondPlayerTime / 60 * 60);
+				timeString += ":" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
 			}
-			std::string secondPlayerTimeString = "Black player time: " + time;
+			std::string blackPlayerTimeString = "Black player time: " + timeString;
+
+			if (time / 60 < 10) {
+				timeString = "0" + std::to_string(time / 60);
+			}
+			else {
+				timeString = std::to_string(time / 60);
+			}
+			if (time - time / 60 * 60 < 10) {
+				timeString += ":0" + std::to_string(time - time / 60 * 60);
+			}
+			else {
+				timeString += ":" + std::to_string(time - time / 60 * 60);
+			}
 			switch (difficulty) {
 			case 1:
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Time: unlimit", 0.01, 0.81);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Time: unlimit", 0.01, 0.74);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps:" + std::to_string(steps)).c_str(), 0.9, 0.95);
 				break;
 			default:
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerTimeString.c_str(), 0.01, 0.81);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerTimeString.c_str(), 0.01, 0.74);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, whitePlayerTimeString.c_str(), 0.01, 0.74);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, blackPlayerTimeString.c_str(), 0.01, 0.67);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, timeString.c_str(), 0.9, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps: " + std::to_string(steps)).c_str(), 0.9, 0.88);
 				break;
 			}
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, interfaceNavigation.c_str(), 0.01, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.88);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("White - " + whitePlayer).c_str(), 0.3, 0.88); 
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Black - " + blackPlayer).c_str(), 0.55, 0.88);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.3, 0.88);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F2 - restart game", 0.01, 0.95);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F3 - change difficulty", 0.2, 0.95);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F4 - change names", 0.4, 0.95);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F5 - records table", 0.6, 0.95);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("White - " + whitePlayer).c_str(), 0.01, 0.88); 
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Black - " + blackPlayer).c_str(), 0.2, 0.88);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.81);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.25, 0.74);
+			if (mateOccurredB) {
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + whitePlayer).c_str(), 0.45, 0.88);
+			}
+			else if (mateOccurredW) {
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + blackPlayer).c_str(), 0.45, 0.88);
+			}
 		}
 		glPopMatrix();
 
@@ -453,7 +598,7 @@ namespace ChessGame {
 		// ƒодаЇмо джерело св≥тла є 0 (њх може бути до 8), зараз воно св≥тить з "очей":
 		glEnable(GL_LIGHT0);
 
-		if (gameMode) {
+		if (currentMode == gameMode) {
 			// ћалюЇмо ус≥ ф≥гури:
 			for (int i = 0; i < shapes.size(); i++) {
 				shapes[i]->draw();
@@ -476,11 +621,11 @@ namespace ChessGame {
 	}
 	// ќброблювач под≥й, пов'€заних з натисканн€м кнопок миш≥
 	void Scene::on_mouse(int button, int state, int x, int y) {
-		if (gameMode) {
+		if (currentMode == gameMode) {
 			// «бер≥гаЇмо поточн≥ координати миш≥:
 			mouseX = x;
 			mouseY = y;
-			if (state == GLUT_UP && !promotionMode) { // кнопка в≥джата
+			if (state == GLUT_UP && !promotionMode && !mateOccurredB && !mateOccurredW) { // кнопка в≥джата
 				// ¬≥джата кнопка була л≥вою
 				if (button == 0) {
 					//FIXES если король по числам может побить фигуру, но по факту из-за шаха не может, то он перемещаетс€, а нужно оставл€ть на месте
@@ -498,21 +643,21 @@ namespace ChessGame {
 					if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
 						Piece* p = pieces[fields[currentZ][currentX]]; // ¬каз≥вник на поточну ф≥гуру
 						bool hit = false; // «м≥нна, що сигнал≥зуЇ, ставс€ удар по ворож≥й ф≥гур≥ чи н≥
-						bool castlingOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ рок≥руванн€ чи н≥
-						bool enPassantOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ вз€тт€ на прозод≥ чи н≥
-						bool promotionOccured = false; // «м≥нна, що сигнал≥зуЇ, сталос€ перетворенн€ п≥шака чи н≥
+						bool castlingOccurred = false; // «м≥нна, що сигнал≥зуЇ, сталос€ рок≥руванн€ чи н≥
+						bool enPassantOccurred = false; // «м≥нна, що сигнал≥зуЇ, сталос€ вз€тт€ на прозод≥ чи н≥
+						bool promotionOccurred = false; // «м≥нна, що сигнал≥зуЇ, сталос€ перетворенн€ п≥шака чи н≥
 						// якщо ф≥гура намагаЇтьс€ перем≥ститис€ за меж≥ дошки, повертаЇмо њњ обратно
 						std::cout << "currentZ " << currentZ << "  currentX " << currentX << "\n";
 						// якщо була обрана €кась ф≥гура та перем≥стилас€ (не за меж≥ дошки), то виконуЇмо подальщ≥ перев≥рки
 						if (mouseZCell != -1 && mouseXCell != -1) {
 							if (typeid(*p) == typeid(Pawn)) {
-								enPassantOccured = static_cast<Pawn*>(p)->isEnPassantOccured(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
-								promotionOccured = static_cast<Pawn*>(p)->isPromotionOccured(mouseZCell, mouseXCell);
+								enPassantOccurred = static_cast<Pawn*>(p)->isEnPassantOccurred(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
+								promotionOccurred = static_cast<Pawn*>(p)->isPromotionOccurred(mouseZCell, mouseXCell);
 							}
-							if (promotionOccured && checkW == -1 && checkB == -1) {
+							if (promotionOccurred && checkW == -1 && checkB == -1) {
 								promotionMode = 1;
 							}
-							if (enPassantOccured && checkW == -1 && checkB == -1) {
+							if (enPassantOccurred && checkW == -1 && checkB == -1) {
 								if (pieces[prevPieceId]->getColor() == 'W') {
 									pieces[prevPieceId]->setXCenter(6 + delB++);
 									pieces[prevPieceId]->setZCenter(-3);
@@ -523,9 +668,10 @@ namespace ChessGame {
 									pieces[prevPieceId]->setZCenter(4);
 									pieces[prevPieceId]->setBeaten(true);
 								}
-								checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
-								checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+								checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+								checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 								whiteMove = !whiteMove;
+								steps++;
 							}
 							// якщо б≥лим оголошено шах ≥ зараз њх х≥д
 							else if (checkW != -1 && whiteMove) {
@@ -536,7 +682,7 @@ namespace ChessGame {
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
 										// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
-										checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+										checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 										fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = k;
 										// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
@@ -549,6 +695,7 @@ namespace ChessGame {
 											}
 											p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
 											whiteMove = !whiteMove;
+											steps++;
 										}
 									}
 									else {
@@ -558,7 +705,7 @@ namespace ChessGame {
 								// якщо ф≥гура намагаЇтьс€ походити, перев≥р€Їмо коректн≥сть ходу
 								else if (p->isMovePossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									// якщо п≥сл€ цього ходу король не зв≥льнивс€ в≥д шаху, повертаЇмо ф≥гуру назад
-									if (static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields) != -1) {
+									if (static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields) != -1) {
 										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 									}
 									// якщо п≥сл€ цього ходу король зв≥льнивс€ в≥д шаху, тобто ф≥гура закрила корол€
@@ -568,6 +715,7 @@ namespace ChessGame {
 										}
 										checkW = -1;
 										whiteMove = !whiteMove;
+										steps++;
 									}
 								}
 								else {
@@ -583,7 +731,7 @@ namespace ChessGame {
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
 										// якщо п≥сл€ удару, король всеодно знаходитьс€ п≥д ударом, скасовуЇмо удар
-										checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
+										checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 										fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = k;
 										// якщо цей удар зв≥льн€Ї корол€ в≥д шаху, проводимо його
@@ -596,6 +744,7 @@ namespace ChessGame {
 												p->setFirstMove(false);
 											}
 											whiteMove = !whiteMove;
+											steps++;
 										}
 									}
 									else {
@@ -605,7 +754,7 @@ namespace ChessGame {
 								// якщо ф≥гура намагаЇтьс€ походити, перев≥р€Їмо коректн≥сть ходу
 								else if (p->isMovePossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 									// якщо п≥сл€ цього ходу король не зв≥льнивс€ в≥д шаху, повертаЇмо ф≥гуру назад
-									if (static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields) != -1) {
+									if (static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields) != -1) {
 										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 									}
 									// якщо п≥сл€ цього ходу король зв≥льнивс€ в≥д шаху, тобто ф≥гура закрила корол€
@@ -615,6 +764,7 @@ namespace ChessGame {
 										}
 										checkB = -1;
 										whiteMove = !whiteMove;
+										steps++;
 									}
 								}
 								else {
@@ -626,19 +776,19 @@ namespace ChessGame {
 								// якщо кол≥р поточноњ ф≥гури б≥лий ≥ зараз х≥д б≥лих
 								if (p->getColor() == 'W' && whiteMove) {
 									// якщо рок≥руванн€ ще не сталос€, ≥ поточна ф≥гура король, перев≥р€Їмо рок≥руванн€
-									if (!castlingOccuredW && typeid(*p) == typeid(King)) {
-										castlingOccuredW = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
-										castlingOccured = castlingOccuredW;
-										hit = castlingOccuredW;
+									if (!castlingOccurredW && typeid(*p) == typeid(King)) {
+										castlingOccurredW = static_cast<King*>(p)->isCastlingOccurred(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
+										castlingOccurred = castlingOccurredW;
+										hit = castlingOccurredW;
 									}
 									// якщо кол≥р поточноњ ф≥гури б≥лий, зараз х≥д б≥лих ≥ ф≥гура, €ку хочемо побити, чорна, то перев≥р€Їмо удар по чорн≥й
-									if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B' && !castlingOccured) {
+									if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'B' && !castlingOccurred) {
 										if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 											int k = fields[mouseZCell][mouseXCell];
 											fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 											fields[currentZ][currentX] = -1;
-											checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
-											checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+											checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+											checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 											fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 											fields[mouseZCell][mouseXCell] = k;
 											if (checkB != -1 && p->getColor() == 'B') {
@@ -661,19 +811,19 @@ namespace ChessGame {
 								// якщо кол≥р поточноњ ф≥гури чорний ≥ зараз х≥д чорних
 								else if (p->getColor() == 'B' && !whiteMove) {
 									// якщо рок≥руванн€ ще не сталос€, ≥ поточна ф≥гура король, перев≥р€Їмо рок≥руванн€
-									if (!castlingOccuredB && typeid(*p) == typeid(King)) {
-										castlingOccuredB = static_cast<King*>(p)->isCastlingOccured(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
-										castlingOccured = castlingOccuredB;
-										hit = castlingOccuredB;
+									if (!castlingOccurredB && typeid(*p) == typeid(King)) {
+										castlingOccurredB = static_cast<King*>(p)->isCastlingOccurred(pieces, fields, zStart, xStart, mouseZCell, mouseXCell, currentZ, currentX);
+										castlingOccurred = castlingOccurredB;
+										hit = castlingOccurredB;
 									}
 									// якщо кол≥р поточноњ ф≥гури чорний, зараз х≥д чорних ≥ ф≥гура, €ку хочемо побити, б≥ла, то перев≥р€Їмо удар по б≥л≥й
-									if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W' && !castlingOccured) {
+									if (pieces[fields[mouseZCell][mouseXCell]]->getColor() == 'W' && !castlingOccurred) {
 										if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 											int k = fields[mouseZCell][mouseXCell];
 											fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 											fields[currentZ][currentX] = -1;
-											checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
-											checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+											checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+											checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 											fields[currentZ][currentX] = fields[mouseZCell][mouseXCell];
 											fields[mouseZCell][mouseXCell] = k;
 											if (checkB != -1 && p->getColor() == 'B') {
@@ -698,21 +848,54 @@ namespace ChessGame {
 									p->movePieceToPosition(fields, zStart, xStart, currentZ, currentX);
 								}
 								// якщо сталос€ рок≥руванн€ або удар, х≥д переходить до противника
-								else if (castlingOccured || hit) {
+								else if (castlingOccurred || hit) {
 									// ѕерев≥рка на шах п≥сл€ удару чи рок≥руванн€
-									checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
-									checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
-									if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
-										mateOccuredW = true;
+									checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+									checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+									if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
+										mateOccurredW = true;
+										recordRow record(firstPlayerName, secondPlayerName, blackPlayer, "10", timeString);
+										switch (difficulty) {
+										case 1:
+											recordsEasy.push_back(record);
+											std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
+											break;
+										case 2:
+											recordsNormal.push_back(record);
+											std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
+											break;
+										case 3:
+											recordsHard.push_back(record);
+											std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
+											break;
+										}
+										writeRecords();
 									}
-									else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccured(pieces, fields)) {
-										mateOccuredB = true;
+									else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
+										mateOccurredB = true;
+										recordRow record(firstPlayerName, secondPlayerName, whitePlayer, "100", timeString);
+										switch (difficulty) {
+										case 1:
+											recordsEasy.push_back(record);
+											std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
+											break;
+										case 2:
+											recordsNormal.push_back(record);
+											std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
+											break;
+										case 3:
+											recordsHard.push_back(record);
+											std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
+											break;
+										}
+										writeRecords();
 									}
 									else {
 										if (p->getFirstMove()) {
 											p->setFirstMove(false);
 										}
 										whiteMove = !whiteMove;
+										steps++;
 									}
 									std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
 								}
@@ -722,8 +905,8 @@ namespace ChessGame {
 								if ((p->getColor() == 'W' && whiteMove) || (p->getColor() == 'B' && !whiteMove)) {
 									if (p->isMovePossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										// ѕерев≥рка на шах дл€ обох королей
-										checkB = static_cast<King*>(pieces[4])->isCheckOccured(pieces, fields);
-										checkW = static_cast<King*>(pieces[28])->isCheckOccured(pieces, fields);
+										checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+										checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 										// якщо король робить х≥д, €кий призведе до шаху, повертаЇмо його назад
 										if (checkB != -1 && p->getColor() == 'B') {
 											p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
@@ -733,18 +916,52 @@ namespace ChessGame {
 											p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 											checkW = -1;
 										}
-										else { // якщо сталос€ усп≥шне перем≥щенн€, х≥д переходить до противника
-											if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccured(pieces, fields)) {
-												mateOccuredW = true;
+										else {
+											// якщо королю оголошено шах, перев≥р€Їмо чи може в≥н зв≥льнитис€ в≥д нього, €кщо н≥, то це мат
+											if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
+												mateOccurredW = true;
+												recordRow record(firstPlayerName, secondPlayerName, blackPlayer, "10", timeString);
+												switch (difficulty) {
+												case 1:
+													recordsEasy.push_back(record);
+													std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
+													break;
+												case 2:
+													recordsNormal.push_back(record);
+													std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
+													break;
+												case 3:
+													recordsHard.push_back(record);
+													std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
+													break;
+												}
+												writeRecords();
 											}
-											else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccured(pieces, fields)) {
-												mateOccuredB = true;
+											else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
+												mateOccurredB = true;
+												recordRow record(firstPlayerName, secondPlayerName, whitePlayer, "100", timeString);
+												switch (difficulty) {
+												case 1:
+													recordsEasy.push_back(record);
+													std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
+													break;
+												case 2:
+													recordsNormal.push_back(record);
+													std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
+													break;
+												case 3:
+													recordsHard.push_back(record);
+													std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
+													break;
+												}
+												writeRecords();
 											}
 											else {
 												if (p->getFirstMove()) {
 													p->setFirstMove(false);
 												}
 												whiteMove = !whiteMove;
+												steps++;
 											}
 										}
 										std::cout << "CheckB " << checkB << " CheckW " << checkW << std::endl;
@@ -770,7 +987,7 @@ namespace ChessGame {
 				return;
 			}
 			this->button = button;  // збер≥гаЇмо ≥нформац≥ю про кнопки
-			if (findNearest(x, y, currentX, currentZ) && currentX != -1 && currentZ != -1 && gameMode) {
+			if (findNearest(x, y, currentX, currentZ) && currentX != -1 && currentZ != -1 && !mateOccurredB && !mateOccurredW) {
 				if (button == 0 && fields[currentZ][currentX] != -1 && !promotionMode) {
 					upPiece(currentX, currentZ);
 					xStart = currentX;
@@ -780,10 +997,10 @@ namespace ChessGame {
 		}
 	}
 	void Scene::on_motion(int x, int y) {
-		if (gameMode) {
+		if (currentMode == gameMode) {
 			switch (button) {
 			case 0:
-				if (findNearest(x, y, xTo, zTo) && fields[currentZ][currentX] != -1 && !promotionMode) {
+				if (findNearest(x, y, xTo, zTo) && fields[currentZ][currentX] != -1 && !promotionMode && !mateOccurredB && !mateOccurredW) {
 					if (movePiece(currentZ, currentX, zTo, xTo)) {
 						currentX = xTo;
 						currentZ = zTo;
@@ -801,7 +1018,7 @@ namespace ChessGame {
 	}
 
 	void Scene::on_special(int key, int x, int y) {
-		if (gameMode) {
+		if (currentMode == gameMode) {
 			switch (key) {
 			case GLUT_KEY_UP:   // наближенн€
 				if (distZ > -8) {
@@ -818,12 +1035,22 @@ namespace ChessGame {
 			case GLUT_KEY_F2:   // нова гра
 				initialize();
 				break;
+			case GLUT_KEY_F3:
+				currentMode = selectDifficultyMode;
+				break;
+			case GLUT_KEY_F4:
+				currentMode = inputFirstPlayerNameMode;
+				break;
+			case GLUT_KEY_F5:
+				readRecords();
+				currentMode = recordsMode;
+				break;
 			}
 		}
 	}
 
 	void Scene::on_keyboard(unsigned char key, int x, int y) {
-		if (inputFirstPlayerNameMode) {
+		if (currentMode == inputFirstPlayerNameMode) {
 			switch (key) {
 			case 8:
 				if (firstPlayerName.size() > 0) {
@@ -832,8 +1059,15 @@ namespace ChessGame {
 				break;
 			case 13:
 				if (firstPlayerName.size() > 0) {
-					inputFirstPlayerNameMode = false;
-					inputSecondPlayerNameMode = true;
+					currentMode = inputSecondPlayerNameMode;
+				}
+				break;
+			case 27:
+				if (!firstInit) {
+					currentMode = gameMode;
+				}
+				else {
+					exit(0);
 				}
 				break;
 			default:
@@ -841,7 +1075,7 @@ namespace ChessGame {
 				break;
 			}
 		}
-		else if (inputSecondPlayerNameMode) {
+		else if (currentMode == inputSecondPlayerNameMode) {
 			switch(key) {
 			case 8:
 				if (secondPlayerName.size() > 0) {
@@ -850,8 +1084,13 @@ namespace ChessGame {
 				break;
 			case 13:
 				if (secondPlayerName.size() > 0) {
-					inputSecondPlayerNameMode = false;
-					selectDifficultyMode = true;
+					if (firstInit) {
+						currentMode = selectDifficultyMode;
+					}
+					else {
+						firstInit = false;
+						currentMode = gameMode;
+					}
 					if (rand() % 2 == 0) {
 						whitePlayer = firstPlayerName;
 						blackPlayer = secondPlayerName;
@@ -862,48 +1101,87 @@ namespace ChessGame {
 					}
 				}
 				break;
+			case 27:
+				if (!firstInit) {
+					currentMode = inputFirstPlayerNameMode;
+				}
+				else {
+					currentMode = inputFirstPlayerNameMode;
+				}
+				break;
 			default:
-				secondPlayerName += key;
+				if (isalpha(key)) {
+					secondPlayerName += key;
+				}
 				break;
 			}
 		}
-		else if (selectDifficultyMode) {
+		else if (currentMode == selectDifficultyMode) {
 			switch (key) {
 			case '1':
+				if (difficulty != 1) {
+					initialize();
+				}
+				firstInit = false;
 				difficulty = 1;
-				selectDifficultyMode = false;
-				gameMode = true;
+				currentMode = gameMode;
 				break;
 			case '2':
-				difficulty = 2;
-				firstPlayerTime = 120 * 60;
-				secondPlayerTime = 120 * 60;
-				selectDifficultyMode = false;
-				gameMode = true;
+				if (difficulty != 2) {
+					difficulty = 2;
+					initialize();
+				}
+				firstInit = false;
+				currentMode = gameMode;
 				break;
 			case '3':
-				difficulty = 3;
-				firstPlayerTime = 60 * 60;
-				secondPlayerTime = 60 * 60;
-				selectDifficultyMode = false;
-				gameMode = true;
+				if (difficulty != 3) {
+					difficulty = 3;
+					initialize();
+				}
+				firstInit = false;
+				currentMode = gameMode;
+				break;
+			case 27:
+				if (!firstInit) {
+					currentMode = gameMode;
+				}
+				else {
+					currentMode = inputSecondPlayerNameMode;
+				}
 				break;
 			}
 		}
-		else if (gameMode && promotionMode) {
-			switch (key) {
-			case 'q':
-				promotionMode = 2;
-				break;
-			case 'b':
-				promotionMode = 3;
-				break;
-			case 'k' :
-				promotionMode = 4;
-				break;
-			case 'r':
-				promotionMode = 5;
-				break;
+		else if (currentMode == gameMode) {
+			if (promotionMode) {
+				switch (key) {
+				case 'q':
+					promotionMode = 2;
+					break;
+				case 'b':
+					promotionMode = 3;
+					break;
+				case 'k':
+					promotionMode = 4;
+					break;
+				case 'r':
+					promotionMode = 5;
+					break;
+				}
+			}
+			if (key == 27) {
+				exit(0);
+			}
+		}
+		else if (currentMode == recordsMode) {
+			readRecords();
+			if (key == 27) {
+				currentMode = gameMode;
+			}
+			else if (key == 'c' || key == 'C') {
+				clearRecords();
+				writeRecords();
+				readRecords();
 			}
 		}
 	}
@@ -916,13 +1194,23 @@ namespace ChessGame {
 		tick++;
 		// нарахували наступну секунду
 		if (tick >= 40) {
-			// секунди нарощуютьс€, €кщо гру не зак≥нчено
-			if (!mateOccuredB && !mateOccuredW && gameMode) {
-				if (whiteMove) {
-					firstPlayerTime--;
-				}
-				else {
-					secondPlayerTime--;
+			if (!mateOccurredB && !mateOccurredW && currentMode == gameMode) {
+				// секунди нарощуютьс€, €кщо гру не зак≥нчено
+				time++;
+				if (difficulty != 1) {
+					// час гравц€ спливаЇ, €кщо зараз його х≥д
+					if (whiteMove) {
+						whitePlayerTime--;
+						if (whitePlayerTime < 0) {
+							mateOccurredW = true;
+						}
+					}
+					else {
+						blackPlayerTime--;
+						if (blackPlayerTime < 0) {
+							mateOccurredB = true;
+						}
+					}
 				}
 			}
 			tick = 0;   // скинули л≥чильник
