@@ -13,10 +13,13 @@ namespace ChessGame {
 				xSize, ySize, zSize,
 				diffColor, ambiColor, specColor, shininess, radius) { }
 
-		virtual bool correctMove(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
+		virtual bool isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool Pawn::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
-		virtual int check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) override;
+		// Перевіряє, чисталося взяття на проході
 		bool isEnPassantOccured(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
+		// Перевіряє, чи сталося перетворення пішака
 		bool isPromotionOccured(int mouseZCell, int mouseXCell);
 	};
 }

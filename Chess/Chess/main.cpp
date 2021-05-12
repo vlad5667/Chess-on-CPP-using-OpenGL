@@ -41,6 +41,7 @@ void on_timer(int value) {
 }
 
 int main(int argc, char* argv[]) {
+	srand(time(NULL));
 	glutInit(&argc, argv);
 	glutInitWindowSize(800, 600);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);

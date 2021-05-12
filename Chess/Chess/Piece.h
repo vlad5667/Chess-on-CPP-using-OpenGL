@@ -11,8 +11,9 @@ namespace ChessGame {
 		int id;
 		char color;
 		float radius;
-		GLuint texture;
+		GLuint texture = 0;
 		bool firstMove = true;
+		bool beaten = false;
 	public:
 		Piece(int id, char color, float xCenter, float yCenter, float zCenter,
 			float xSize, float ySize, float zSize,
@@ -32,12 +33,23 @@ namespace ChessGame {
 		void setRadius(float radius) { this->radius = radius; }
 		void setFirstMove(bool firstMove) { this->firstMove = firstMove; }
 		bool getFirstMove() { return firstMove; }
+		void setBeaten(bool beaten) { this->beaten = beaten; }
+		bool isBeaten() { return beaten; }
 
 		virtual void draw() override;
-		virtual bool correctMove(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) = 0;
+		// Перевіряє хід на коректність
+		virtual bool isMovePossible(Piece *pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) = 0;
+		// Перевіряє, чи можливо побити побити ворожу фігуру
 		virtual bool isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) = 0;
-		virtual int check(Piece* pieces[32], int(&fields)[8][8]) = 0;
+		// Перевіряє, чи спричинила дана фігура шах
+		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) = 0;
+		// Перевіряє, чи знаходиться дана фігура під загрозою захвату
+		bool isCapturePossible(Piece* pieces[32], int(&fields)[8][8]);
+		// Перевіряє, чи загрожує дана фігура захватом фігурі з ідентифікатором capturePieceId
+		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) = 0;
+		// Переміщує фігуру з однієї позиції в іншу
 		void movePieceToPosition(int (&fields)[8][8], int zDestination, int xDestionation, int currentZ, int currentX);
+		// Завантажує вказану текстуру
 		void loadTexture(const char* imagePath);
 	};
 }

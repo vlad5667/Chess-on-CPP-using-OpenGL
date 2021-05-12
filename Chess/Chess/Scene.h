@@ -26,7 +26,8 @@ namespace ChessGame {
 		float mouseX, mouseY; // поточн≥ координати миш≥
 		float width, height;  // –озм≥ри в≥кна
 		float distZ;          // в≥дстань по ос≥ Z до сцени
-		int time;
+		int firstPlayerTime; // час на парт≥ю першого гравц€
+		int secondPlayerTime; // час на парт≥ю другого гравц€
 		int fields[N][M];
 		int mouseXCell, mouseZCell; // координати кл≥тинки, на €ку вказуЇ миша, коли в≥джата кнопка
 		int currentX, currentZ; // поточн≥ координати ф≥гури
