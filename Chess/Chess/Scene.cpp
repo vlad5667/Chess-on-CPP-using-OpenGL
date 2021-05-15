@@ -498,7 +498,7 @@ namespace ChessGame {
 		// Включаємо режим роботи з видовою матрицею:
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glTranslatef(-0.4f, 0.0f, distZ);	// камера з початку координат зсувається на distZ, 
+		glTranslatef(-0.5f, 0.0f, distZ);	// камера з початку координат зсувається на distZ, 
 
 		glRotatef(angleX, 0.0f, 1.0f, 0.0f);  // потім обертається по осі Oy
 		glRotatef(angleY, 1.0f, 0.0f, 0.0f);  // потім обертається по осі Ox 
