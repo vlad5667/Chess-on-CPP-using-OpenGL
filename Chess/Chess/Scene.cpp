@@ -12,9 +12,14 @@
 
 namespace ChessGame {
 	using namespace GraphUtils;
-	std::string firstPlayerName = "", secondPlayerName = ""; // «м≥нн≥, що збер≥гають ≥мена гравц≥в
-	std::string whitePlayer, blackPlayer;
-	std::string timeString = "";
+	bool firstInit = true; // зм≥нна, що сигнал≥зуЇ про першу ≥н≥ц≥ал≥зац≥ю гри
+	bool collision; // «м≥нна, що сигнал≥зуЇ про кол≥з≥ю з ф≥гурою
+	int prevPieceId; // «м≥нна, що збер≥гаЇ ≥дентиф≥катор ф≥гури, що ходила до цього (потр≥бно дл€ вз€тт€ на проход≥)
+	int promotionMode; // «м≥нна, що сигнал≥зуЇ про виб≥р ф≥гури дл€ перетворенн€ п≥шака
+	bool castlingOccurredW, castlingOccurredB; // «м≥нн≥, що сигнал≥зубть, сталос€ рок≥руванн€ чи н≥
+	int checkW, checkB; // «м≥нн≥, що сигнал≥зують, ставс€ шах чи н≥
+	bool autoPlacement = false; // «м≥нна, що сигнал≥зуЇ про те, що обаране автоматичне розм≥щенн€ ф≥гур
+	
 
 	bool sortComp(recordRow A, recordRow B) {
 		std::string timeA = "";
@@ -151,7 +156,6 @@ namespace ChessGame {
 			for (int j = 0; j < M; j++) {
 				if (i < 2 || i > 5) {
 					fields[i][j] = k;
-					pieces[k]->setCoords(j - 3, 0.3, i - 3);
 					pieces[k]->setFirstMove(true);
 					pieces[k]->setBeaten(false);
 					k++;
@@ -170,6 +174,9 @@ namespace ChessGame {
 		else {
 			whitePlayer = secondPlayerName;
 			blackPlayer = firstPlayerName;
+		}
+		for (int i = 0; i < 32; i++) {
+			delete pieces[i];
 		}
 		shapes.clear();
 		int k = 0;
@@ -194,62 +201,69 @@ namespace ChessGame {
 				}
 			}
 		}
-		// ƒодаЇмо ф≥гури на дошку
-		for (int i = -3; i < N - 3; i++) {
-			for (int j = -3; j < M - 3; j++) {
-				if (i <= -2 || i >= 3) {
-					if (i == -2) {
-						shapes.push_back(pieces[k] = new Pawn(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_p.png");
+		
+		// якщо обрано режим автоматичноњ розстановки ф≥гур
+		if (!autoPlacement) {
+			// ƒодаЇмо ф≥гури на дошку
+			for (int i = -3; i < N - 3; i++) {
+				for (int j = -3; j < M - 3; j++) {
+					if (i <= -2 || i >= 3) {
+						if (i == -2) {
+							shapes.push_back(pieces[k] = new Pawn(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_p.png");
+						}
+						else if (i == 3) {
+							shapes.push_back(pieces[k] = new Pawn(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_p.png");
+						}
+						else if (i == -3 && (j == -3 || j == 4)) {
+							shapes.push_back(pieces[k] = new Rook(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_r.png");
+						}
+						else if (i == 4 && (j == -3 || j == 4)) {
+							shapes.push_back(pieces[k] = new Rook(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_r.png");
+						}
+						else if (i == -3 && (j == -2 || j == 3)) {
+							shapes.push_back(pieces[k] = new Knight(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_kn.png");
+						}
+						else if (i == 4 && (j == -2 || j == 3)) {
+							shapes.push_back(pieces[k] = new Knight(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_kn.png");
+						}
+						else if (i == -3 && (j == -1 || j == 2)) {
+							shapes.push_back(pieces[k] = new Bishop(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_b.png");
+						}
+						else if (i == 4 && (j == -1 || j == 2)) {
+							shapes.push_back(pieces[k] = new Bishop(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_b.png");
+						}
+						else if (i == -3 && j == 0) {
+							shapes.push_back(pieces[k] = new Queen(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_q.png");
+						}
+						else if (i == 4 && j == 0) {
+							shapes.push_back(pieces[k] = new Queen(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_q.png");
+						}
+						else if (i == -3 && j == 1) {
+							shapes.push_back(pieces[k] = new King(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/b_k.png");
+						}
+						else if (i == 4 && j == 1) {
+							shapes.push_back(pieces[k] = new King(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
+							pieces[k]->loadTexture("textures/w_k.png");
+						}
+						k++;
 					}
-					else if (i == 3) {
-						shapes.push_back(pieces[k] = new Pawn(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_p.png");
-					}
-					else if (i == -3 && (j == -3 || j == 4)) {
-						shapes.push_back(pieces[k] = new Rook(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_r.png");
-					}
-					else if (i == 4 && (j == -3 || j == 4)) {
-						shapes.push_back(pieces[k] = new Rook(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_r.png");
-					}
-					else if (i == -3 && (j == -2 || j == 3)) {
-						shapes.push_back(pieces[k] = new Knight(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_kn.png");
-					}
-					else if (i == 4 && (j == -2 || j == 3)) {
-						shapes.push_back(pieces[k] = new Knight(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_kn.png");
-					}
-					else if (i == -3 && (j == -1 || j == 2)) {
-						shapes.push_back(pieces[k] = new Bishop(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_b.png");
-					}
-					else if (i == 4 && (j == -1 || j == 2)) {
-						shapes.push_back(pieces[k] = new Bishop(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_b.png");
-					}
-					else if (i == -3 && j == 0) {
-						shapes.push_back(pieces[k] = new Queen(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_q.png");
-					}
-					else if (i == 4 && j == 0) {
-						shapes.push_back(pieces[k] = new Queen(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_q.png");
-					}
-					else if (i == -3 && j == 1) {
-						shapes.push_back(pieces[k] = new King(k, 'B', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/b_k.png");
-					}
-					else if (i == 4 && j == 1) {
-						shapes.push_back(pieces[k] = new King(k, 'W', j, 0.3, i, 0.8, 0.1, 0.8, diffWhite, ambiWhite, specWhite, 64, 0.4));
-						pieces[k]->loadTexture("textures/w_k.png");
-					}
-					k++;
 				}
 			}
 		}
+		/*else {
+
+		}*/
 		resetPieces();
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
@@ -682,7 +696,7 @@ namespace ChessGame {
 							else if (checkW != -1 && whiteMove) {
 								// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 								if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
-									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
+									if (p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
@@ -731,7 +745,7 @@ namespace ChessGame {
 							else if (checkB != -1 && !whiteMove) {
 								// якщо стала€ кол≥з≥€ з ≥ншою ф≥гурою, то перев≥р€Їмо чи можливий удар
 								if (collision && fields[mouseZCell][mouseXCell] != -1 && pieces[fields[mouseZCell][mouseXCell]] != p) {
-									if (hit = p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
+									if (p->isHitPossible(pieces, fields, zStart, xStart, mouseZCell, mouseXCell)) {
 										int k = fields[mouseZCell][mouseXCell];
 										fields[mouseZCell][mouseXCell] = fields[currentZ][currentX];
 										fields[currentZ][currentX] = -1;
