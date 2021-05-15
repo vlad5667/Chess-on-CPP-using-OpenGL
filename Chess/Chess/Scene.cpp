@@ -109,19 +109,19 @@ namespace ChessGame {
 		out << "------------------------------\nEASY\n";
 		for (auto& record : recordsEasy) {
 			if (i > 5) break;
-			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		i = 1;
 		out << "------------------------------\nNORMAL\n";
 		for (auto& record : recordsNormal) {
 			if (i > 5) break;
-			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		i = 1;
 		out << "------------------------------\nHARD\n";
 		for (auto& record : recordsHard) {
 			if (i > 5) break;
-			out << i++ << " " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		out.close();
 	}
@@ -481,95 +481,100 @@ namespace ChessGame {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glColor3f(1, 1, 0); // жовтий текст
-		if (currentMode == inputFirstPlayerNameMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input first player name", 0.43, 0.6);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.47, 0.55);
-		}
-		if (currentMode == inputSecondPlayerNameMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input second player name", 0.42, 0.6);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.47, 0.55);
-		}
-		if (currentMode == selectDifficultyMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Select difficulty", 0.46, 0.6);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "1 - Easy", 0.47, 0.55);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "2 - Normal", 0.47, 0.48);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "3 - Hard", 0.47, 0.41);
-		}
-		if (currentMode == recordsMode) {
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "C - clear records", 0.01, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "RECORDS", 0.46, 0.92);
-			for (int i = 0; i < recordsTable.size(); i++) {
-				double y = 0.88 - (4 * i) / 100.0;
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, recordsTable[i].c_str(), 0.35, y);
-			}
- 		}
-		if (currentMode == gameMode) {
-			if (whitePlayerTime / 60 < 10) {
-				timeString = "0" + std::to_string(whitePlayerTime / 60);
-			}
-			else {
-				timeString = std::to_string(whitePlayerTime / 60);
-			}
-			if (whitePlayerTime - whitePlayerTime / 60 * 60 < 10) {
-				timeString += ":0" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
-			}
-			else {
-				timeString += ":" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
-			}
-			std::string whitePlayerTimeString = "White player time: " + timeString;
-
-			if (blackPlayerTime / 60 < 10) {
-				timeString = "0" + std::to_string(blackPlayerTime / 60);
-			}
-			else {
-				timeString = std::to_string(blackPlayerTime / 60);
-			}
-			if (blackPlayerTime - blackPlayerTime / 60 * 60 < 10) {
-				timeString += ":0" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
-			}
-			else {
-				timeString += ":" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
-			}
-			std::string blackPlayerTimeString = "Black player time: " + timeString;
-
-			if (time / 60 < 10) {
-				timeString = "0" + std::to_string(time / 60);
-			}
-			else {
-				timeString = std::to_string(time / 60);
-			}
-			if (time - time / 60 * 60 < 10) {
-				timeString += ":0" + std::to_string(time - time / 60 * 60);
-			}
-			else {
-				timeString += ":" + std::to_string(time - time / 60 * 60);
-			}
-			switch (difficulty) {
-			case 1:
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Time: unlimit", 0.01, 0.74);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps:" + std::to_string(steps)).c_str(), 0.9, 0.95);
+		switch (currentMode) {
+			case inputFirstPlayerNameMode:
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input first player name", 0.43, 0.6);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.47, 0.55);
 				break;
-			default:
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, whitePlayerTimeString.c_str(), 0.01, 0.74);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, blackPlayerTimeString.c_str(), 0.01, 0.67);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, timeString.c_str(), 0.9, 0.95);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps: " + std::to_string(steps)).c_str(), 0.9, 0.88);
+			case inputSecondPlayerNameMode:
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input second player name", 0.42, 0.6);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.47, 0.55);
 				break;
-			}
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F2 - restart game", 0.01, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F3 - change difficulty", 0.2, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F4 - change names", 0.4, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F5 - records table", 0.6, 0.95);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("White - " + whitePlayer).c_str(), 0.01, 0.88); 
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Black - " + blackPlayer).c_str(), 0.2, 0.88);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.81);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.25, 0.74);
-			if (mateOccurredB) {
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + whitePlayer).c_str(), 0.45, 0.88);
-			}
-			else if (mateOccurredW) {
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + blackPlayer).c_str(), 0.45, 0.88);
-			}
+			case selectDifficultyMode:
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Select difficulty", 0.46, 0.6);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "1 - Easy", 0.47, 0.55);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "2 - Normal", 0.47, 0.48);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "3 - Hard", 0.47, 0.41);
+				break;
+			case recordsMode:
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "C - clear records", 0.01, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "RECORDS", 0.46, 0.92);
+				for (int i = 0; i < recordsTable.size(); i++) {
+					double y = 0.88 - (4 * i) / 100.0;
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, recordsTable[i].c_str(), 0.35, y);
+				}
+				break;
+			case placementMode:
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F1 - auto place", 0.6, 0.95);
+				break;
+			case gameMode:
+				if (whitePlayerTime / 60 < 10) {
+					timeString = "0" + std::to_string(whitePlayerTime / 60);
+				}
+				else {
+					timeString = std::to_string(whitePlayerTime / 60);
+				}
+				if (whitePlayerTime - whitePlayerTime / 60 * 60 < 10) {
+					timeString += ":0" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
+				}
+				else {
+					timeString += ":" + std::to_string(whitePlayerTime - whitePlayerTime / 60 * 60);
+				}
+				std::string whitePlayerTimeString = "White player time: " + timeString;
+
+				if (blackPlayerTime / 60 < 10) {
+					timeString = "0" + std::to_string(blackPlayerTime / 60);
+				}
+				else {
+					timeString = std::to_string(blackPlayerTime / 60);
+				}
+				if (blackPlayerTime - blackPlayerTime / 60 * 60 < 10) {
+					timeString += ":0" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
+				}
+				else {
+					timeString += ":" + std::to_string(blackPlayerTime - blackPlayerTime / 60 * 60);
+				}
+				std::string blackPlayerTimeString = "Black player time: " + timeString;
+
+				if (time / 60 < 10) {
+					timeString = "0" + std::to_string(time / 60);
+				}
+				else {
+					timeString = std::to_string(time / 60);
+				}
+				if (time - time / 60 * 60 < 10) {
+					timeString += ":0" + std::to_string(time - time / 60 * 60);
+				}
+				else {
+					timeString += ":" + std::to_string(time - time / 60 * 60);
+				}
+				switch (difficulty) {
+				case 1:
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Time: unlimit", 0.01, 0.74);
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps:" + std::to_string(steps)).c_str(), 0.9, 0.95);
+					break;
+				default:
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, whitePlayerTimeString.c_str(), 0.01, 0.74);
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, blackPlayerTimeString.c_str(), 0.01, 0.67);
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, timeString.c_str(), 0.9, 0.95);
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps: " + std::to_string(steps)).c_str(), 0.9, 0.88);
+					break;
+				}
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F2 - restart game", 0.01, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F3 - change difficulty", 0.2, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F4 - change names", 0.4, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F5 - records table", 0.6, 0.95);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("White - " + whitePlayer).c_str(), 0.01, 0.88);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Black - " + blackPlayer).c_str(), 0.2, 0.88);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.81);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.25, 0.74);
+				if (mateOccurredB) {
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + whitePlayer).c_str(), 0.45, 0.88);
+				}
+				else if (mateOccurredW) {
+					drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + blackPlayer).c_str(), 0.45, 0.88);
+				}
+				break;
 		}
 		glPopMatrix();
 
@@ -854,7 +859,7 @@ namespace ChessGame {
 									checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 									if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
 										mateOccurredW = true;
-										recordRow record(firstPlayerName, secondPlayerName, blackPlayer, "10", timeString);
+										recordRow record(firstPlayerName, secondPlayerName, blackPlayer, std::to_string(steps), timeString);
 										switch (difficulty) {
 										case 1:
 											recordsEasy.push_back(record);
@@ -873,7 +878,7 @@ namespace ChessGame {
 									}
 									else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
 										mateOccurredB = true;
-										recordRow record(firstPlayerName, secondPlayerName, whitePlayer, "100", timeString);
+										recordRow record(firstPlayerName, secondPlayerName, whitePlayer, std::to_string(steps), timeString);
 										switch (difficulty) {
 										case 1:
 											recordsEasy.push_back(record);
@@ -920,7 +925,7 @@ namespace ChessGame {
 											// якщо королю оголошено шах, перев≥р€Їмо чи може в≥н зв≥льнитис€ в≥д нього, €кщо н≥, то це мат
 											if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
 												mateOccurredW = true;
-												recordRow record(firstPlayerName, secondPlayerName, blackPlayer, "10", timeString);
+												recordRow record(firstPlayerName, secondPlayerName, blackPlayer, std::to_string(steps), timeString);
 												switch (difficulty) {
 												case 1:
 													recordsEasy.push_back(record);
@@ -939,7 +944,7 @@ namespace ChessGame {
 											}
 											else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
 												mateOccurredB = true;
-												recordRow record(firstPlayerName, secondPlayerName, whitePlayer, "100", timeString);
+												recordRow record(firstPlayerName, secondPlayerName, whitePlayer, std::to_string(steps), timeString);
 												switch (difficulty) {
 												case 1:
 													recordsEasy.push_back(record);

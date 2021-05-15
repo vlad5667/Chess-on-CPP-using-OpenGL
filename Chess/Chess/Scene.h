@@ -37,6 +37,7 @@ namespace ChessGame {
 		inputSecondPlayerNameMode, // сигнал≥зуЇ про режим введенн€ ≥мен≥ другого гравц€
 		selectDifficultyMode, // сигнал≥зуЇ про режим вибору складност≥
 		recordsMode, // сигнал≥зуЇ про режим перегл€ду таблиц≥ рекорд≥в
+		placementMode, // сигнал≥зуЇ про режим розм≥щенн€ ф≥гур на дошц≥
 		gameMode // сигнал≥зуЇ про режим гри
 	};
 
