@@ -3,9 +3,13 @@
 
 #include <gl/glut.h>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 #include "Shape.h"
+#include "utils.h"
 
 namespace ChessGame {
+	using namespace GraphUtils;
 	class Piece : public Shape {
 	private:
 		int id;

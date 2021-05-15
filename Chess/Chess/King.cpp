@@ -3,7 +3,6 @@
 #include "Bishop.h"
 #include "Queen.h"
 #include "Knight.h"
-#include <cmath>
 
 namespace ChessGame {
 	bool King::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
@@ -123,7 +122,7 @@ namespace ChessGame {
 	}
 	int King::isCheckOccurred(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
-			for (int k = 0; k < 15; k++) {
+			for (int k = 0; k < 16; k++) {
 				if (!pieces[k]->isBeaten()) {
 					if (pieces[k]->check(pieces, fields)) {
 						return k;
@@ -358,7 +357,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
@@ -401,7 +400,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
@@ -444,7 +443,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
@@ -487,7 +486,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}
@@ -532,7 +531,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
@@ -575,7 +574,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
@@ -618,7 +617,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
@@ -661,7 +660,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}
@@ -706,7 +705,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
@@ -749,7 +748,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
@@ -792,7 +791,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
@@ -835,7 +834,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX + 1; z < checkPieceZ; z++, x++) {
@@ -878,7 +877,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
@@ -921,7 +920,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
@@ -964,7 +963,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
@@ -1007,7 +1006,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}

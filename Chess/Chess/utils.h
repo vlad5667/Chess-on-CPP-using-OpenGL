@@ -1,6 +1,11 @@
 #ifndef utils_h
 #define utils_h
 
+#include <algorithm>
+#include <time.h>
+#include <stdlib.h>
+#include <gl/glut.h>
+
 namespace GraphUtils {
 	extern float diffWhite[];
 	extern float ambiWhite[];
@@ -47,6 +52,10 @@ namespace GraphUtils {
 	void parallelepiped(float length, float width, float height);
 
 	void drawString(void *font, const char* text, float x, float y);
+
+	int binarySearch(std::pair<int, int>* arr, int n, int x);
+
+	bool sortComp(std::pair<int, int> A, std::pair<int, int> B);
 }
 
 #endif

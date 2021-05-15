@@ -1,6 +1,5 @@
 #include "Queen.h"
 #include "King.h"
-#include <cmath>
 
 namespace ChessGame {
 	bool Queen::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
@@ -149,8 +148,24 @@ namespace ChessGame {
 	}
 	bool Queen::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->getId() != fields[currentZ][currentX]) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
 		for (int z = currentZ - 1; z >= 0; z--) {
 			if (fields[z][currentX] != -1) {
@@ -244,8 +259,24 @@ namespace ChessGame {
 	}
 	bool Queen::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->getId() != fields[currentZ][currentX]) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
 		for (int z = currentZ - 1; z >= 0; z--) {
 			if (fields[z][currentX] == capturePieceId) {

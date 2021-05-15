@@ -654,6 +654,10 @@ namespace ChessGame {
 					//FIXES если король по числам может побить фигуру, но по факту из-за шаха не может, то он перемещается, а нужно оставлять на месте
 					//TODO FIXES сделать чтобы король мог бить, сделать интерфейс, сделать Пат
 					//TODO сделать нормальную рокировку, то есть учесть все условия (если на линии рокировки есть клетка, которая бьётся вражеской фигурой, то рокировка не возможна)
+					//FIXES когда ферзь бобил коня, который спасал от мата, нету шаха (также мата не должно быть, потому что пешка может побить ферзя)
+					// Это происходит из-за проверки if (this->getId() != fields[currentZ][currentX]). currentZ, currentX берутся с getXCenter и getZCenter, но из-за того что перемещние происходит только в fields
+					// То значения берутся не те.
+					
 					downAllPieces();
 					findNearest(x, y, mouseXCell, mouseZCell);
 					if (mouseXCell == -1 || mouseZCell == -1 || currentZ == -1 || currentX == -1) {
@@ -1016,7 +1020,9 @@ namespace ChessGame {
 				}
 				break;
 			default:
-				firstPlayerName += key;
+				if (isalpha(key)) {
+					firstPlayerName += key;
+				}
 				break;
 			}
 		}
