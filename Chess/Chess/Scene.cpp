@@ -675,10 +675,6 @@ namespace ChessGame {
 						if (mouseZCell != -1 && mouseXCell != -1) {
 							if (typeid(*p) == typeid(Pawn)) {
 								enPassantOccurred = static_cast<Pawn*>(p)->isEnPassantOccurred(pieces, fields, prevPieceId, mouseZCell, mouseXCell);
-								promotionOccurred = static_cast<Pawn*>(p)->isPromotionOccurred(mouseZCell, mouseXCell);
-							}
-							if (promotionOccurred && checkW == -1 && checkB == -1) {
-								promotionMode = 1;
 							}
 							if (enPassantOccurred && checkW == -1 && checkB == -1) {
 								if (pieces[prevPieceId]->getColor() == 'W') {
@@ -908,6 +904,12 @@ namespace ChessGame {
 										p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 									}
 								}
+							}
+							if (typeid(*p) == typeid(Pawn)) {
+								promotionOccurred = static_cast<Pawn*>(p)->isPromotionOccurred(mouseZCell, mouseXCell);
+							}
+							if (promotionOccurred && checkW == -1 && checkB == -1) {
+								promotionMode = 1;
 							}
 						}
 						prevPieceId = p->getId();
