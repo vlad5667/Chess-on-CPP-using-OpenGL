@@ -234,4 +234,19 @@ namespace ChessGame {
 		}
 		return false;
 	}
+	/*bool Pawn::hasMove(Piece* pieces[32], int(&fields)[8][8]) {
+		int currentZ = getZCenter() + 3, currentX = getXCenter() + 3;
+		if (getColor() == 'W') {
+			if (getFirstMove()) {
+				if (fields[currentZ - 1][currentX] == -1 || fields[currentZ - 2][currentX] == -1) {
+					return true;
+				}
+			}
+			else if (currentZ >= 1) {
+				if (fields[currentZ - 1][currentX] == -1) {
+					return true;
+				}
+			}
+		}
+	}*/
 }

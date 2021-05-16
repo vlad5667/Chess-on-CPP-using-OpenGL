@@ -1113,7 +1113,7 @@ namespace ChessGame {
 			int checkPieceId = isCheckOccurred(pieces, fields);
 			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
 				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
-					return false;
+					return true;
 				}
 				if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
 					return true;
@@ -1121,5 +1121,20 @@ namespace ChessGame {
 			}
 		}
 		return false;
+	}
+	bool King::isStalemateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
+		if (!this->isCheckOccurred(pieces, fields)) {
+			if (!this->isRetreatPossible(pieces, fields)) {
+				int checkPieceId = isCheckOccurred(pieces, fields);
+				if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
+					if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
+						return true;
+					}
+					if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
+						return true;
+					}
+				}
+			}
+		}
 	}
 }
