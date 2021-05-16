@@ -150,8 +150,24 @@ namespace ChessGame {
 	}
 	bool Rook::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->getId() != fields[currentZ][currentX]) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
 		for (int z = currentZ - 1; z >= 0; z--) {
 			if (fields[z][currentX] == capturePieceId) {
@@ -247,6 +263,158 @@ namespace ChessGame {
 			}
 			else if (fields[currentZ][x] != -1) {
 				break;
+			}
+		}
+		return false;
+	}
+	bool Rook::hasMove(Piece* pieces[32], int(&fields)[8][8]) {
+		int currentZ = getZCenter() + 3, currentX = getXCenter() + 3;
+		for (int z = currentZ - 1, x = currentX; z >= 0; z--) {
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+			else if (fields[z][x] != -1 && pieces[fields[z][x]]->getColor() != getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+		}
+		for (int z = currentZ + 1, x = currentX; z < 8; z++) {
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+			else if (fields[z][x] != -1 && pieces[fields[z][x]]->getColor() != getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+		}
+		for (int z = currentZ, x = currentX - 1; x >= 0; x--) {
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+			else if (fields[z][x] != -1 && pieces[fields[z][x]]->getColor() != getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+		}
+		for (int z = currentZ, x = currentX + 1; x < 8; z++) {
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
+			}
+			else if (fields[z][x] != -1 && pieces[fields[z][x]]->getColor() != getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
+				int checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (getColor() == 'W') {
+					if (checkW == -1) {
+						return true;
+					}
+				}
+				else {
+					if (checkB == -1) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;

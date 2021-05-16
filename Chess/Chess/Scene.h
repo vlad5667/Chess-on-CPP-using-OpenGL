@@ -17,15 +17,15 @@ namespace ChessGame {
 	const int M = 8, N = 8; // к≥льк≥сть р€дк≥в та колонок пол€
 
 	struct recordRow {
-		std::string firstPlayerName;
-		std::string secondPlayerName;
+		std::string whitePlayerName;
+		std::string blackPlayerName;
 		std::string winner;
 		std::string steps;
 		std::string time;
 
-		recordRow(std::string firstPlayerName, std::string secondPlayerName, std::string winner, std::string steps, std::string time) {
-			this->firstPlayerName = firstPlayerName;
-			this->secondPlayerName = secondPlayerName;
+		recordRow(std::string whitePlayerName, std::string blackPlayerName, std::string winner, std::string steps, std::string time) {
+			this->whitePlayerName = whitePlayerName;
+			this->blackPlayerName = blackPlayerName;
 			this->winner = winner;
 			this->steps = steps;
 			this->time = time;
@@ -48,7 +48,8 @@ namespace ChessGame {
 		Modes currentMode; // поточний режим сцени
 		std::string firstPlayerName = "", secondPlayerName = ""; // «м≥нн≥, що збер≥гають ≥мена гравц≥в
 		std::string whitePlayer, blackPlayer; // «м≥нн≥, що збер≥гають ≥мена б≥лого ≥ чорного гравц€
-		std::string timeString = ""; // «м≥нна, що в≥дображаЇ таймер
+		std::string winner;
+		std::string timeString; // «м≥нна, що в≥дображаЇ таймер
 		std::vector<recordRow> recordsEasy; // масив рекорд≥в легкого р≥вню складност≥
 		std::vector<recordRow> recordsNormal; // масив рекорд≥в нормального р≥вню складност≥
 		std::vector<recordRow> recordsHard; // масив рекорд≥в складного р≥вню складнгост≥
@@ -72,6 +73,7 @@ namespace ChessGame {
 		int xTo, zTo; // координати пункту призначенн€ ф≥гури
 		bool whiteMove; // х≥д (false - чорн≥, true - б≥л≥)
 		bool mateOccurredW, mateOccurredB; // «м≥нн≥, що сигнал≥зують, ставс€ мат чи н≥
+		bool stalemateOccurredW, stalemateOccurredB; // «м≥нн≥, що сигнал≥зують, ставс€ пат чи н≥
 		int delW, delB; // «м≥нн≥, що задають координату ’ дл€ побитих ф≥гур
 	public:
 		Scene();
@@ -92,6 +94,7 @@ namespace ChessGame {
 		bool findNearest(int x, int y, int& x1, int& z1);
 		void readRecords();
 		void writeRecords();
+		void addRecord();
 		void clearRecords();
 	};
 
