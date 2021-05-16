@@ -159,6 +159,25 @@ namespace ChessGame {
 	}
 	bool King::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
+		}
 		if (currentZ <= 6) {
 			if (fields[currentZ + 1][currentX] == capturePieceId) {
 				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
@@ -1028,110 +1047,194 @@ namespace ChessGame {
 		}
 		return false;
 	}
-	bool King::isRetreatPossible(Piece* pieces[32], int(&fields)[8][8]) {
+	bool King::hasMove(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		int noCheckCells = 0;
 		if (currentZ <= 6) {
-			if (fields[currentZ + 1][currentX] == -1) {
-				fields[currentZ + 1][currentX] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ + 1, x = currentX;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
-				fields[currentZ + 1][currentX] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentZ >= 1) {
-			if (fields[currentZ - 1][currentX] == -1) {
-				fields[currentZ - 1][currentX] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ - 1, x = currentX;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
-				fields[currentZ - 1][currentX] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentX >= 1) {
-			if (fields[currentZ][currentX - 1] == -1) {
-				fields[currentZ][currentX - 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ, x = currentX - 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
-				fields[currentZ][currentX - 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentX <= 6) {
-			if (fields[currentZ][currentX + 1] == -1) {
-				fields[currentZ][currentX + 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ, x = currentX + 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
-				fields[currentZ][currentX + 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentZ <= 6 && currentX <= 6) {
-			if (fields[currentZ + 1][currentX + 1] == -1) {
-				fields[currentZ + 1][currentX + 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ + 1, x = currentX + 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ + 1][currentX + 1];
-				fields[currentZ + 1][currentX + 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentZ >= 1 && currentX <= 6) {
-			if (fields[currentZ - 1][currentX + 1] == -1) {
-				fields[currentZ - 1][currentX + 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ - 1, x = currentX + 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
-				fields[currentZ - 1][currentX + 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentZ >= 1 && currentX >= 1) {
-			if (fields[currentZ - 1][currentX - 1] == -1) {
-				fields[currentZ - 1][currentX - 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ - 1, x = currentX - 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
-				fields[currentZ - 1][currentX - 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
 		if (currentZ <= 6 && currentX >= 1) {
-			if (fields[currentZ + 1][currentX - 1] == -1) {
-				fields[currentZ + 1][currentX - 1] = fields[currentZ][currentX];
-				fields[currentZ][currentX] = -1;
-				if (isCheckOccurred(pieces, fields) == -1) {
-					noCheckCells++;
+			int z = currentZ + 1, x = currentX - 1;
+			if (fields[z][x] == -1) {
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				int check = isCheckOccurred(pieces, fields);
+				std::swap(fields[z][x], fields[currentZ][currentX]);
+				if (check == -1) {
+					return true;
 				}
-				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
-				fields[currentZ + 1][currentX - 1] = -1;
+			}
+			else if (getColor() != pieces[fields[z][x]]->getColor()) {
+				int k = fields[z][x];
+				fields[z][x] = fields[currentZ][currentX];
+				fields[currentZ][currentX] = -1;
+				int check = isCheckOccurred(pieces, fields);
+				fields[currentZ][currentX] = fields[z][x];
+				fields[z][x] = k;
+				if (check == -1) {
+					return true;
+				}
 			}
 		}
-		if (!noCheckCells) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 	bool King::isMateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
-		if (!this->isRetreatPossible(pieces, fields)) {
+		if (!hasMove(pieces, fields)) {
 			int checkPieceId = isCheckOccurred(pieces, fields);
 			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
 				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
 					return true;
 				}
-				if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
+				if (!isSalvationPossible(pieces, fields, checkPieceId)) {
 					return true;
 				}
 			}
@@ -1139,18 +1242,30 @@ namespace ChessGame {
 		return false;
 	}
 	bool King::isStalemateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
-		if (!this->isCheckOccurred(pieces, fields)) {
-			if (!this->isRetreatPossible(pieces, fields)) {
-				int checkPieceId = isCheckOccurred(pieces, fields);
-				if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
-					if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
-						return true;
+		if (isCheckOccurred(pieces, fields) == -1) {
+			if (!hasMove(pieces, fields)) {
+				if (getColor() == 'W') {
+					for (int k = 16; k < 32; k++) {
+						if (!pieces[k]->isBeaten()) {
+							if (pieces[k]->hasMove(pieces, fields)) {
+								return false;
+							}
+						}
 					}
-					if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
-						return true;
+					return true;
+				}
+				else {
+					for (int k = 0; k < 16; k++) {
+						if (!pieces[k]->isBeaten()) {
+							if (pieces[k]->hasMove(pieces, fields)) {
+								return false;
+							}
+						}
 					}
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 }

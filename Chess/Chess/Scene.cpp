@@ -12,14 +12,13 @@
 
 namespace ChessGame {
 	using namespace GraphUtils;
+
 	bool firstInit = true; // змінна, що сигналізує про першу ініціалізацію гри
-	bool collision; // Змінна, що сигналізує про колізію з фігурою
 	int prevPieceId; // Змінна, що зберігає ідентифікатор фігури, що ходила до цього (потрібно для взяття на проході)
 	int promotionMode; // Змінна, що сигналізує про вибір фігури для перетворення пішака
 	bool castlingOccurredW, castlingOccurredB; // Змінні, що сигналізубть, сталося рокірування чи ні
 	int checkW, checkB; // Змінні, що сигналізують, стався шах чи ні
-	bool autoPlacement = false; // Змінна, що сигналізує про те, що обаране автоматичне розміщення фігур
-	
+	bool autoPlacementMode = false; // Змінна, що сигналізує про те, що обаране автоматичне розміщення фігур
 
 	bool sortComp(recordRow A, recordRow B) {
 		std::string timeA = "";
@@ -38,18 +37,18 @@ namespace ChessGame {
 		timeB += B.time[3];
 		timeB += B.time[4];
 		timeInSecondsB += atoi(timeB.c_str());
-		return timeInSecondsA > timeInSecondsB;
+		return timeInSecondsA < timeInSecondsB;
 	}
 
 	void Scene::readRecords() {
-		std::ifstream in("records.txt");
-		if (!in.is_open()) {
-			writeRecords();
-		}
 		recordsTable.clear();
 		recordsEasy.clear();
 		recordsNormal.clear();
 		recordsHard.clear();
+		std::ifstream in("records.txt");
+		if (!in.is_open()) {
+			writeRecords();
+		}
 		std::string row;
 		int dif;
 		while (std::getline(in, row)) {
@@ -65,7 +64,7 @@ namespace ChessGame {
 			}
 			if (isdigit(row[0])) {
 				std::string firstName = "", secondName = "", winner = "", steps = "", time = "";
-				int i = 2;
+				int i = 4;
 				while (row[i] != '-') {
 					firstName += row[i];
 					i++;
@@ -75,8 +74,8 @@ namespace ChessGame {
 					secondName += row[i];
 					i++;
 				}
-				i += 12;
-				while (row[i] != ' ' && row[i + 1] != '|') {
+				i += 3;
+				while (row[i] != ' ' || row[i + 1] != '|') {
 					winner += row[i];
 					i++;
 				}
@@ -114,21 +113,40 @@ namespace ChessGame {
 		out << "------------------------------\nEASY\n";
 		for (auto& record : recordsEasy) {
 			if (i > 5) break;
-			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.whitePlayerName << "-" << record.blackPlayerName << " | " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		i = 1;
 		out << "------------------------------\nNORMAL\n";
 		for (auto& record : recordsNormal) {
 			if (i > 5) break;
-			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.whitePlayerName << "-" << record.blackPlayerName << " | " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		i = 1;
 		out << "------------------------------\nHARD\n";
 		for (auto& record : recordsHard) {
 			if (i > 5) break;
-			out << i++ << " | " << record.firstPlayerName << "-" << record.secondPlayerName << " | winner - " << record.winner << " | " << record.steps << " | " << record.time << "\n";
+			out << i++ << " | " << record.whitePlayerName << "-" << record.blackPlayerName << " | " << record.winner << " | " << record.steps << " | " << record.time << "\n";
 		}
 		out.close();
+	}
+
+	void Scene::addRecord() {
+		recordRow record(whitePlayer, blackPlayer, winner, std::to_string(steps), timeString);
+		switch (difficulty) {
+		case 1:
+			recordsEasy.push_back(record);
+			std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
+			break;
+		case 2:
+			recordsNormal.push_back(record);
+			std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
+			break;
+		case 3:
+			recordsHard.push_back(record);
+			std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
+			break;
+		}
+		writeRecords();
 	}
 
 	void Scene::clearRecords() {
@@ -203,7 +221,7 @@ namespace ChessGame {
 		}
 		
 		// Якщо обрано режим автоматичної розстановки фігур
-		if (!autoPlacement) {
+		if (!autoPlacementMode) {
 			// Додаємо фігури на дошку
 			for (int i = -3; i < N - 3; i++) {
 				for (int j = -3; j < M - 3; j++) {
@@ -273,15 +291,14 @@ namespace ChessGame {
 		}
 		// Встановлення значень всіх змінних за замовчуванням
 		timeString = "";
+		winner = "";
 		time = 0;
 		steps = 0;
-		collision = false;
 		delW = 0, delB = 0;
-		castlingOccurredW = false;
-		castlingOccurredB = false;
+		castlingOccurredW = false, castlingOccurredB = false;
 		checkW = -1, checkB = -1;
-		mateOccurredW = false;
-		mateOccurredB = false;
+		mateOccurredW = false, mateOccurredB = false;
+		stalemateOccurredW = false, stalemateOccurredB = false;
 		prevPieceId = 0;
 		promotionMode = 0;
 		whiteMove = true;
@@ -309,7 +326,6 @@ namespace ChessGame {
 			return false;
 		}
 		if (fields[zTo][xTo] != -1 && (currentX != xTo || currentZ != zTo)) {
-			collision = true;
 			return false;
 		}
 
@@ -534,11 +550,11 @@ namespace ChessGame {
 		switch (currentMode) {
 		case inputFirstPlayerNameMode:
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input first player name", 0.43, 0.6);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.47, 0.55);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, firstPlayerName.c_str(), 0.48, 0.55);
 			break;
 		case inputSecondPlayerNameMode:
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Input second player name", 0.42, 0.6);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.47, 0.55);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, secondPlayerName.c_str(), 0.48, 0.55);
 			break;
 		case selectDifficultyMode:
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "Select difficulty", 0.46, 0.6);
@@ -654,11 +670,6 @@ namespace ChessGame {
 				// Віджата кнопка була лівою
 				if (button == 0) {
 					//TODO сделать нормальную рокировку, то есть учесть все условия (если на линии рокировки есть клетка, которая бьётся вражеской фигурой, то рокировка не возможна)
-
-					// ПАТ делать так: если рассматриваем чёрного короля и он не под шахом, то проверять все чёрные фигуры, есть ли у них ходы (если есть ход
-					// и он приводит к шаху, то это не считается ходом). Если ходы есть, то не пат. Если ходов нет, проверить есть ли ходы у короля.
-					// Если ходы у короля есть (и если они не шаховые), то пата нет. Если у короля нет ходов, то пат. Также учесть, что если ход короля вызывает шах,
-					// то это не считается ходом, так ходить нельзя!!!
 
 					downAllPieces();
 					findNearest(x, y, mouseXCell, mouseZCell); // Знаходимо координати поля, на яке натиснув гравець
@@ -803,42 +814,14 @@ namespace ChessGame {
 									// Якщо білий король під шахом перевіряємо чи стався мат, якщо так, тоді партію окінчено, записуємо партію до таблиці рекордів
 									if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
 										mateOccurredW = true;
-										recordRow record(firstPlayerName, secondPlayerName, blackPlayer, std::to_string(steps), timeString);
-										switch (difficulty) {
-										case 1:
-											recordsEasy.push_back(record);
-											std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
-											break;
-										case 2:
-											recordsNormal.push_back(record);
-											std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
-											break;
-										case 3:
-											recordsHard.push_back(record);
-											std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
-											break;
-										}
-										writeRecords();
+										winner = "winner - " + blackPlayer;
+										addRecord();
 									}
 									// Якщо чорний король під шахом перевіряємо чи стався мат, якщо так, тоді партію окінчено, записуємо партію до таблиці рекордів
 									else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
 										mateOccurredB = true;
-										recordRow record(firstPlayerName, secondPlayerName, whitePlayer, std::to_string(steps), timeString);
-										switch (difficulty) {
-										case 1:
-											recordsEasy.push_back(record);
-											std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
-											break;
-										case 2:
-											recordsNormal.push_back(record);
-											std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
-											break;
-										case 3:
-											recordsHard.push_back(record);
-											std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
-											break;
-										}
-										writeRecords();
+										winner = "winner - " + whitePlayer;
+										addRecord();
 									}
 									// Якщо мата не сталося, хід переходить до противника
 									else {
@@ -879,43 +862,15 @@ namespace ChessGame {
 										else if (checkW != -1 && static_cast<King*>(pieces[28])->isMateOccurred(pieces, fields)) {
 											mateOccurredW = true;
 											steps++;
-											recordRow record(firstPlayerName, secondPlayerName, blackPlayer, std::to_string(steps), timeString);
-											switch (difficulty) {
-											case 1:
-												recordsEasy.push_back(record);
-												std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
-												break;
-											case 2:
-												recordsNormal.push_back(record);
-												std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
-												break;
-											case 3:
-												recordsHard.push_back(record);
-												std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
-												break;
-											}
-											writeRecords();
+											winner = "winner - " + blackPlayer;
+											addRecord();
 										}
 										// Якщо чорний король під шахом перевіряємо чи стався мат, якщо так, тоді партію окінчено, записуємо партію до таблиці рекордів
 										else if (checkB != -1 && static_cast<King*>(pieces[4])->isMateOccurred(pieces, fields)) {
 											mateOccurredB = true;
 											steps++;
-											recordRow record(firstPlayerName, secondPlayerName, whitePlayer, std::to_string(steps), timeString);
-											switch (difficulty) {
-											case 1:
-												recordsEasy.push_back(record);
-												std::sort(recordsEasy.begin(), recordsEasy.end(), sortComp);
-												break;
-											case 2:
-												recordsNormal.push_back(record);
-												std::sort(recordsNormal.begin(), recordsNormal.end(), sortComp);
-												break;
-											case 3:
-												recordsHard.push_back(record);
-												std::sort(recordsHard.begin(), recordsHard.end(), sortComp);
-												break;
-											}
-											writeRecords();
+											winner = "winner - " + whitePlayer;
+											addRecord();
 										}
 										// Якщо мат не стався та після переміщення чорний король знаходиться під шахом, то скасовуємо це переміщення
 										else if (checkB != -1 && p->getColor() == 'B') {
@@ -941,13 +896,25 @@ namespace ChessGame {
 											}
 											p->movePieceToPosition(fields, zStart, xStart, mouseZCell, mouseXCell);
 										}
-										// Якщо переміщення сталося
+										// Якщо переміщення сталося та ніякий король не під шахом
 										else {
-											if (p->getFirstMove()) {
-												p->setFirstMove(false);
+											if (stalemateOccurredB = static_cast<King*>(pieces[4])->isStalemateOccurred(pieces, fields)) {
+												steps++;
+												winner = "draw";
+												addRecord();
 											}
-											whiteMove = !whiteMove;
-											steps++;
+											else if (stalemateOccurredW = static_cast<King*>(pieces[28])->isStalemateOccurred(pieces, fields)) {
+												steps++;
+												winner = "draw";
+												addRecord();
+											}
+											else {
+												if (p->getFirstMove()) {
+													p->setFirstMove(false);
+												}
+												whiteMove = !whiteMove;
+												steps++;
+											}
 										}
 									}
 									// Якщо хід не можливий, скасовуємо переміщення
@@ -1049,7 +1016,7 @@ namespace ChessGame {
 				currentMode = inputFirstPlayerNameMode;
 				break;
 			case GLUT_KEY_F5: // таблиця рекордів
-				readRecords();
+				readRecords(); // зчитуємо рекорди з файлу
 				currentMode = recordsMode;
 				break;
 			}
@@ -1156,7 +1123,6 @@ namespace ChessGame {
 			}
 		}
 		else if (currentMode == recordsMode) { // режим перегляду таблиці рекордів
-			readRecords(); // зчитуємо рекорди з файлу
 			if (key == 27) { // якщо натиснута клавіша - escape, то повертаємося до гри
 				currentMode = gameMode;
 			}

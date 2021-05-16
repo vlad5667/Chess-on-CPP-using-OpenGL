@@ -17,7 +17,7 @@ namespace ChessGame {
 		virtual bool Pawn::isHitPossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) override;
 		virtual bool check(Piece* pieces[32], int(&fields)[8][8]) override;
 		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) override;
-		//virtual bool hasMove(Piece* pieces[32], int(&fields)[8][8]) override;
+		virtual bool hasMove(Piece* pieces[32], int(&fields)[8][8]) override;
 		// Перевіряє, чисталося взяття на проході
 		bool isEnPassantOccurred(Piece* pieces[32], int(&fields)[8][8], int prevPieceId, int mouseZCell, int mouseXCell);
 		// Перевіряє, чи сталося перетворення пішака
