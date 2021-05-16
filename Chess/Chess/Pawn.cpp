@@ -1,7 +1,5 @@
 #include "Pawn.h"
 #include "King.h"
-#include <cmath>
-#include <iostream>
 
 namespace ChessGame {
 	bool Pawn::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
@@ -45,17 +43,35 @@ namespace ChessGame {
 	}
 	bool Pawn::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->getId() != fields[currentZ][currentX]) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
-		if (currentZ >= 1 && currentX >= 1 && currentZ <= 6 && currentX <= 6) {
-			if (getColor() == 'W') {
+		if (getColor() == 'W') {
+			if (currentZ >= 1 && currentX <= 6) {
 				if (fields[currentZ - 1][currentX + 1] != -1) {
 					Piece* p = pieces[fields[currentZ - 1][currentX + 1]];
 					if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
 						return true;
 					}
 				}
+			}
+			if (currentZ >= 1 && currentX >= 1) {
 				if (fields[currentZ - 1][currentX - 1] != -1) {
 					Piece* p = pieces[fields[currentZ - 1][currentX - 1]];
 					if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
@@ -63,13 +79,17 @@ namespace ChessGame {
 					}
 				}
 			}
-			else {
+		}
+		else {
+			if (currentZ <= 6 && currentX <= 6) {
 				if (fields[currentZ + 1][currentX + 1] != -1) {
 					Piece* p = pieces[fields[currentZ + 1][currentX + 1]];
 					if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
 						return true;
 					}
 				}
+			}
+			if (currentZ <= 6 && currentX >= 1) {
 				if (fields[currentZ + 1][currentX - 1] != -1) {
 					Piece* p = pieces[fields[currentZ + 1][currentX - 1]];
 					if (typeid(*p) == typeid(King) && p->getColor() != this->getColor()) {
@@ -111,8 +131,24 @@ namespace ChessGame {
 	}
 	bool Pawn::capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->isBeaten()) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
 		if (currentZ >= 1 && currentX >= 1 && currentZ <= 6 && currentX <= 6) {
 			if (getColor() == 'W') {
@@ -198,4 +234,19 @@ namespace ChessGame {
 		}
 		return false;
 	}
+	/*bool Pawn::hasMove(Piece* pieces[32], int(&fields)[8][8]) {
+		int currentZ = getZCenter() + 3, currentX = getXCenter() + 3;
+		if (getColor() == 'W') {
+			if (getFirstMove()) {
+				if (fields[currentZ - 1][currentX] == -1 || fields[currentZ - 2][currentX] == -1) {
+					return true;
+				}
+			}
+			else if (currentZ >= 1) {
+				if (fields[currentZ - 1][currentX] == -1) {
+					return true;
+				}
+			}
+		}
+	}*/
 }

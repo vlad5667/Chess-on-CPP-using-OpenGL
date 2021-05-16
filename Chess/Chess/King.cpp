@@ -3,7 +3,6 @@
 #include "Bishop.h"
 #include "Queen.h"
 #include "Knight.h"
-#include <cmath>
 
 namespace ChessGame {
 	bool King::isMovePossible(Piece* pieces[32], int(&fields)[8][8], int zStart, int xStart, int mouseZCell, int mouseXCell) {
@@ -52,8 +51,24 @@ namespace ChessGame {
 	}
 	bool King::check(Piece* pieces[32], int(&fields)[8][8]) {
 		int currentZ = this->getZCenter() + 3, currentX = this->getXCenter() + 3;
-		if (this->getId() != fields[currentZ][currentX]) {
-			return false;
+		int id = this->getId();
+		if (id != fields[currentZ][currentX]) {
+			bool pieceIsFound = false;
+			for (currentZ = 0; currentZ < 8; currentZ++) {
+				std::pair<int, int> row[8];
+				for (int i = 0; i < 8; i++) {
+					row[i] = std::make_pair(fields[currentZ][i], i);
+				}
+				std::sort(row, row + 8, sortComp);
+				currentX = binarySearch(row, 8, id);
+				if (currentX != -1) {
+					pieceIsFound = true;
+					break;
+				}
+			}
+			if (!pieceIsFound) {
+				return false;
+			}
 		}
 		if (currentZ <= 6) {
 			if (fields[currentZ + 1][currentX] != -1) {
@@ -123,7 +138,7 @@ namespace ChessGame {
 	}
 	int King::isCheckOccurred(Piece* pieces[32], int(&fields)[8][8]) {
 		if (this->getColor() == 'W') {
-			for (int k = 0; k < 15; k++) {
+			for (int k = 0; k < 16; k++) {
 				if (!pieces[k]->isBeaten()) {
 					if (pieces[k]->check(pieces, fields)) {
 						return k;
@@ -358,7 +373,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
@@ -401,7 +416,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
@@ -444,7 +459,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
@@ -487,7 +502,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}
@@ -532,7 +547,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
@@ -575,7 +590,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
@@ -618,7 +633,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
@@ -661,7 +676,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}
@@ -706,7 +721,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX; z < checkPieceZ; z++) {
@@ -749,7 +764,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX + 1; x < checkPieceX; x++) {
@@ -792,7 +807,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ, x = currentX - 1; x > checkPieceX; x--) {
@@ -835,7 +850,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX + 1; z < checkPieceZ; z++, x++) {
@@ -878,7 +893,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ + 1, x = currentX - 1; z < checkPieceZ; z++, x--) {
@@ -921,7 +936,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX - 1; z > checkPieceZ; z--, x--) {
@@ -964,7 +979,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 			for (int z = currentZ - 1, x = currentX + 1; z > checkPieceZ; z--, x++) {
@@ -1007,7 +1022,7 @@ namespace ChessGame {
 					}
 				}
 				else {
-					return false;
+					break;
 				}
 			}
 		}
@@ -1114,7 +1129,7 @@ namespace ChessGame {
 			int checkPieceId = isCheckOccurred(pieces, fields);
 			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
 				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
-					return false;
+					return true;
 				}
 				if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
 					return true;
@@ -1122,5 +1137,20 @@ namespace ChessGame {
 			}
 		}
 		return false;
+	}
+	bool King::isStalemateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
+		if (!this->isCheckOccurred(pieces, fields)) {
+			if (!this->isRetreatPossible(pieces, fields)) {
+				int checkPieceId = isCheckOccurred(pieces, fields);
+				if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
+					if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
+						return true;
+					}
+					if (!this->isSalvationPossible(pieces, fields, checkPieceId)) {
+						return true;
+					}
+				}
+			}
+		}
 	}
 }

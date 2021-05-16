@@ -3,9 +3,13 @@
 
 #include <gl/glut.h>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 #include "Shape.h"
+#include "utils.h"
 
 namespace ChessGame {
+	using namespace GraphUtils;
 	class Piece : public Shape {
 	private:
 		int id;
@@ -47,6 +51,8 @@ namespace ChessGame {
 		bool isCapturePossible(Piece* pieces[32], int(&fields)[8][8]);
 		// Перевіряє, чи загрожує дана фігура захватом фігурі з ідентифікатором capturePieceId
 		virtual bool capture(Piece* pieces[32], int(&fields)[8][8], int capturePieceId) = 0;
+		// Перевіряє, чи є доступні ходи у фігури
+		//virtual bool hasMove(Piece* pieces[32], int(&fields)[8][8]) = 0;
 		// Переміщує фігуру з однієї позиції в іншу
 		void movePieceToPosition(int (&fields)[8][8], int zDestination, int xDestionation, int currentZ, int currentX);
 		// Завантажує вказану текстуру

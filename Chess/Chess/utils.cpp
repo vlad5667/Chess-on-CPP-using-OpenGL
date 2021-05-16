@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <time.h>
-#include <stdlib.h>
-#include <gl/glut.h>
 #include "utils.h"
 
 namespace GraphUtils {
@@ -106,5 +102,26 @@ namespace GraphUtils {
 			glutBitmapCharacter(font, *text);
 			text++;
 		}
+	}
+
+	int binarySearch(std::pair<int, int>* arr, int n, int x) {
+		int l = 0, r = n;
+		while (l <= r) {
+			int mid = (l + r) / 2;
+			if (x > arr[mid].first) {
+				l = mid + 1;
+			}
+			else if (x < arr[mid].first) {
+				r = mid - 1;
+			}
+			else {
+				return arr[mid].second;
+			}
+		}
+		return -1;
+	}
+
+	bool sortComp(std::pair<int, int> A, std::pair<int, int> B) {
+		return A.first < B.first;
 	}
 }

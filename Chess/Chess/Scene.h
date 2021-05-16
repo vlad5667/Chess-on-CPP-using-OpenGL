@@ -46,36 +46,32 @@ namespace ChessGame {
 							// а також реал≥зуЇ обробку под≥й GLUT
 	class Scene {
 		Modes currentMode; // поточний режим сцени
+		std::string firstPlayerName = "", secondPlayerName = ""; // «м≥нн≥, що збер≥гають ≥мена гравц≥в
+		std::string whitePlayer, blackPlayer; // «м≥нн≥, що збер≥гають ≥мена б≥лого ≥ чорного гравц€
+		std::string timeString = ""; // «м≥нна, що в≥дображаЇ таймер
 		std::vector<recordRow> recordsEasy; // масив рекорд≥в легкого р≥вню складност≥
 		std::vector<recordRow> recordsNormal; // масив рекорд≥в нормального р≥вню складност≥
 		std::vector<recordRow> recordsHard; // масив рекорд≥в складного р≥вню складнгост≥
 		std::vector<std::string> recordsTable; // таблиц€ рекорд≥в
-		int difficulty; // зм≥нна, що вказуЇ на складн≥сть гри (1 - легко, 2 - нормально, 3 - важко)
 		std::vector<Shape*> shapes; // "гнучкий" масив указ≥вник≥в на елементи гри
 		Piece* pieces[4 * N]; // масив ф≥гур
-		bool firstInit = true; // зм≥нна, що сигнал≥зуЇ про першу ≥н≥ц≥ал≥зац≥ю гри
-		int button;           // кнопка миш≥ (-1 - не натиснута, 0 - л≥ва, 2 - права)
+		int difficulty; // зм≥нна, що вказуЇ на складн≥сть гри (1 - легко, 2 - нормально, 3 - важко)
+		int button; // кнопка миш≥ (-1 - не натиснута, 0 - л≥ва, 2 - права)
 		float angleX, angleY; // поточний кут повороту сцени 
 		float mouseX, mouseY; // поточн≥ координати миш≥
 		float width, height;  // –озм≥ри в≥кна
-		float distZ;          // в≥дстань по ос≥ Z до сцени
+		float distZ; // в≥дстань по ос≥ Z до сцени
 		int time; // тривал≥сть парт≥њ
-		int steps = 0; // к≥льк≥сть ход≥в за парт≥ю
-		int whitePlayerTime; // час на парт≥ю першого гравц€
-		int blackPlayerTime; // час на парт≥ю другого гравц€
+		int steps; // к≥льк≥сть ход≥в за парт≥ю
+		int whitePlayerTime; // час на парт≥ю б≥лого гравц€
+		int blackPlayerTime; // час на парт≥ю чорного гравц€
 		int fields[N][M]; // представленн€ пол€ у вигл€д≥ двовим≥рного масиву
 		int mouseXCell, mouseZCell; // координати кл≥тинки, на €ку вказуЇ миша, коли в≥джата кнопка
 		int currentX, currentZ; // поточн≥ координати ф≥гури
 		int xStart, zStart;	// координати ф≥гури до перем≥щенн€
 		int xTo, zTo; // координати пункту призначенн€ ф≥гури
 		bool whiteMove; // х≥д (false - чорн≥, true - б≥л≥)
-		bool castlingOccurredW; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ б≥лих
-		bool castlingOccurredB; // «м≥нна, що сигнал≥зуЇ, що сталос€ рок≥руванн€ чорних
-		int checkW, checkB; // «м≥нн≥, що сигнал≥зують, ставс€ шах чи н≥
 		bool mateOccurredW, mateOccurredB; // «м≥нн≥, що сигнал≥зують, ставс€ мат чи н≥
-		int prevPieceId; // «м≥нна, що збер≥гаЇ ≥дентиф≥катор ф≥гури, що ходила до цього (потр≥бно дл€ вз€тт€ на проход≥)
-		int promotionMode; // «м≥нна, що сигнал≥зуЇ про виб≥р ф≥гури дл€ перетворенн€ п≥шака
-		bool collision; // «м≥нна, що сигнал≥зуЇ про кол≥з≥ю з ф≥гурою
 		int delW, delB; // «м≥нн≥, що задають координату ’ дл€ побитих ф≥гур
 	public:
 		Scene();
