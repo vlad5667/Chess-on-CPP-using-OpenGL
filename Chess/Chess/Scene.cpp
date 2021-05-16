@@ -384,7 +384,7 @@ namespace ChessGame {
 	}
 	// Оброблювач події, пов'язаної з перемалюванням вікна
 	void Scene::on_paint() {
-		std::string interfaceNavigation, state, promotion;
+		std::string state, promotion;
 		if (promotionMode > 1) {
 			int id = prevPieceId;
 			float x = pieces[id]->getXCenter(), z = pieces[id]->getZCenter();
@@ -436,7 +436,7 @@ namespace ChessGame {
 			promotionMode = 0;
 		}
 		if (promotionMode) {
-			promotion = "Select the promotion piece (q - Queen, b - Bishop, k - Knight, r - Rook)";
+			promotion = "Select the promotion piece (Q - Queen, B - Bishop, K - Knight, R - Rook)";
 		}
 		else {
 			promotion = "";
@@ -604,8 +604,8 @@ namespace ChessGame {
 				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps:" + std::to_string(steps)).c_str(), 0.9, 0.95);
 				break;
 			default:
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, whitePlayerTimeString.c_str(), 0.01, 0.74);
-				drawString(GLUT_BITMAP_TIMES_ROMAN_24, blackPlayerTimeString.c_str(), 0.01, 0.67);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, whitePlayerTimeString.c_str(), 0.01, 0.81);
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, blackPlayerTimeString.c_str(), 0.01, 0.74);
 				drawString(GLUT_BITMAP_TIMES_ROMAN_24, timeString.c_str(), 0.9, 0.95);
 				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Steps: " + std::to_string(steps)).c_str(), 0.9, 0.88);
 				break;
@@ -616,13 +616,15 @@ namespace ChessGame {
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, "F5 - records table", 0.6, 0.95);
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("White - " + whitePlayer).c_str(), 0.01, 0.88);
 			drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Black - " + blackPlayer).c_str(), 0.2, 0.88);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.01, 0.81);
-			drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.25, 0.74);
+			drawString(GLUT_BITMAP_TIMES_ROMAN_24, promotion.c_str(), 0.25, 0.81);
 			if (mateOccurredB) {
 				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + whitePlayer).c_str(), 0.45, 0.88);
 			}
 			else if (mateOccurredW) {
 				drawString(GLUT_BITMAP_TIMES_ROMAN_24, ("Winner - " + blackPlayer).c_str(), 0.45, 0.88);
+			}
+			else {
+				drawString(GLUT_BITMAP_TIMES_ROMAN_24, state.c_str(), 0.45, 0.88);
 			}
 			break;
 		}
