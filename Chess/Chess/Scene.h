@@ -20,14 +20,14 @@ namespace ChessGame {
 		std::string whitePlayerName;
 		std::string blackPlayerName;
 		std::string winner;
-		std::string steps;
+		std::string moves;
 		std::string time;
 
-		recordRow(std::string whitePlayerName, std::string blackPlayerName, std::string winner, std::string steps, std::string time) {
+		recordRow(std::string whitePlayerName, std::string blackPlayerName, std::string winner, std::string moves, std::string time) {
 			this->whitePlayerName = whitePlayerName;
 			this->blackPlayerName = blackPlayerName;
 			this->winner = winner;
-			this->steps = steps;
+			this->moves = moves;
 			this->time = time;
 		}
 	};
@@ -37,7 +37,6 @@ namespace ChessGame {
 		inputSecondPlayerNameMode, // сигнал≥зуЇ про режим введенн€ ≥мен≥ другого гравц€
 		selectDifficultyMode, // сигнал≥зуЇ про режим вибору складност≥
 		recordsMode, // сигнал≥зуЇ про режим перегл€ду таблиц≥ рекорд≥в
-		placementMode, // сигнал≥зуЇ про режим розм≥щенн€ ф≥гур на дошц≥
 		gameMode // сигнал≥зуЇ про режим гри
 	};
 
@@ -47,7 +46,7 @@ namespace ChessGame {
 	class Scene {
 		Modes currentMode; // поточний режим сцени
 		std::string firstPlayerName = "", secondPlayerName = ""; // «м≥нн≥, що збер≥гають ≥мена гравц≥в
-		std::string whitePlayer, blackPlayer; // «м≥нн≥, що збер≥гають ≥мена б≥лого ≥ чорного гравц€
+		std::string whitePlayerName, blackPlayerName; // «м≥нн≥, що збер≥гають ≥мена б≥лого ≥ чорного гравц€
 		std::string winner;
 		std::string timeString; // «м≥нна, що в≥дображаЇ таймер
 		std::vector<recordRow> recordsEasy; // масив рекорд≥в легкого р≥вню складност≥
@@ -63,7 +62,7 @@ namespace ChessGame {
 		float width, height;  // –озм≥ри в≥кна
 		float distZ; // в≥дстань по ос≥ Z до сцени
 		int time; // тривал≥сть парт≥њ
-		int steps; // к≥льк≥сть ход≥в за парт≥ю
+		int moves; // к≥льк≥сть ход≥в за парт≥ю
 		int whitePlayerTime; // час на парт≥ю б≥лого гравц€
 		int blackPlayerTime; // час на парт≥ю чорного гравц€
 		int fields[N][M]; // представленн€ пол€ у вигл€д≥ двовим≥рного масиву
@@ -72,9 +71,8 @@ namespace ChessGame {
 		int xStart, zStart;	// координати ф≥гури до перем≥щенн€
 		int xTo, zTo; // координати пункту призначенн€ ф≥гури
 		bool whiteMove; // х≥д (false - чорн≥, true - б≥л≥)
-		bool mateOccurredW, mateOccurredB; // «м≥нн≥, що сигнал≥зують, ставс€ мат чи н≥
-		bool stalemateOccurredW, stalemateOccurredB; // «м≥нн≥, що сигнал≥зують, ставс€ пат чи н≥
-		int delW, delB; // «м≥нн≥, що задають координату ’ дл€ побитих ф≥гур
+		bool finish; // зм≥нна, що сигнал≥зуЇ, зак≥нчена парт≥€ чи н≥
+		
 	public:
 		Scene();
 		~Scene();
@@ -96,6 +94,7 @@ namespace ChessGame {
 		void writeRecords();
 		void addRecord();
 		void clearRecords();
+		void checkConditions();
 	};
 
 }

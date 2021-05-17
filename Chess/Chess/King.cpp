@@ -187,12 +187,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX];
 				fields[currentZ + 1][currentX] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -208,12 +208,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX];
 				fields[currentZ - 1][currentX] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -229,12 +229,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ][currentX - 1];
 				fields[currentZ][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -250,12 +250,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ][currentX + 1];
 				fields[currentZ][currentX + 1] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -292,12 +292,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX + 1];
 				fields[currentZ - 1][currentX + 1] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -313,12 +313,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ - 1][currentX - 1];
 				fields[currentZ - 1][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -334,12 +334,12 @@ namespace ChessGame {
 				fields[currentZ][currentX] = fields[currentZ + 1][currentX - 1];
 				fields[currentZ + 1][currentX - 1] = capturePieceId;
 				if (getColor() == 'W') {
-					if (checkB != -1) {
+					if (checkW != -1) {
 						return false;
 					}
 				}
 				else {
-					if (checkW != -1) {
+					if (checkB != -1) {
 						return false;
 					}
 				}
@@ -1228,14 +1228,16 @@ namespace ChessGame {
 		return false;
 	}
 	bool King::isMateOccurred(Piece* pieces[32], int(&fields)[8][8]) {
-		if (!hasMove(pieces, fields)) {
-			int checkPieceId = isCheckOccurred(pieces, fields);
-			if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
-				if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
-					return true;
-				}
-				if (!isSalvationPossible(pieces, fields, checkPieceId)) {
-					return true;
+		int checkPieceId = isCheckOccurred(pieces, fields);
+		if (checkPieceId != -1) {
+			if (!hasMove(pieces, fields)) {
+				if (!pieces[checkPieceId]->isCapturePossible(pieces, fields)) {
+					if (typeid(*pieces[checkPieceId]) == typeid(Knight)) {
+						return true;
+					}
+					if (!isSalvationPossible(pieces, fields, checkPieceId)) {
+						return true;
+					}
 				}
 			}
 		}
