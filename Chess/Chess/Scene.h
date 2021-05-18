@@ -72,7 +72,6 @@ namespace ChessGame {
 		int xTo, zTo; // координати пункту призначення фігури
 		bool whiteMove; // хід (false - чорні, true - білі)
 		bool finish; // змінна, що сигналізує, закінчена партія чи ні
-		
 	public:
 		Scene();
 		~Scene();

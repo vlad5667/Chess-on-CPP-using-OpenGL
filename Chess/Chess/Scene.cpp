@@ -15,6 +15,8 @@ namespace ChessGame {
 
 	bool firstInit = true; // змінна, що сигналізує про першу ініціалізацію гри
 	int prevPieceId; // Змінна, що зберігає ідентифікатор фігури, що ходила до цього (потрібно для взяття на проході)
+	int deletedPieceId; // Змінна, що зберігає ідентифікатор фігури, що була видалена з дошки останньою
+	int deletedPieceZ, deletedPieceX; // Змінні, що зберігають координати до видалення фігури, що була видалена з дошки останньою
 	int promotionMode; // Змінна, що сигналізує про вибір фігури для перетворення пішака
 	bool castlingOccurredW, castlingOccurredB; // Змінні, що сигналізубть, сталося рокірування чи ні
 	int checkW, checkB; // Змінні, що сигналізують, стався шах чи ні
@@ -231,7 +233,6 @@ namespace ChessGame {
 		}
 	}
 	void Scene::initialize() {
-
 		// Встановлення значень всіх змінних за замовчуванням
 		timeString = "";
 		winner = "";
@@ -243,7 +244,9 @@ namespace ChessGame {
 		checkW = -1, checkB = -1;
 		mateOccurredW = false, mateOccurredB = false;
 		stalemateOccurredW = false, stalemateOccurredB = false;
-		prevPieceId = 0;
+		prevPieceId = -1;
+		deletedPieceId = -1;
+		deletedPieceZ = -1, deletedPieceX = -1;
 		promotionMode = 0;
 		whiteMove = true;
 		finish = false;
@@ -727,6 +730,9 @@ namespace ChessGame {
 								Piece* p1 = pieces[fields[currentZ][currentX]], *p2 = pieces[fields[mouseZCell][mouseXCell]];
 								if (fields[mouseZCell][mouseXCell] != -1 && p2 != p1) {
 									if (p1->getColor() != p2->getColor() && typeid(*p2) != typeid(King)) {
+										deletedPieceId = p2->getId();
+										deletedPieceZ = mouseZCell;
+										deletedPieceX = mouseXCell;
 										p2->setBeaten(true);
 										if (p2->getColor() == 'B') {
 											p2->setZCenter(4 - (delB / 3));
@@ -1034,9 +1040,12 @@ namespace ChessGame {
 					if (mouseZCell != -1 && mouseXCell != -1) {
 						if (fields[mouseZCell][mouseXCell] != -1 && fields[mouseZCell][mouseXCell] != 4 && fields[mouseZCell][mouseXCell] != 28) {
 							Piece* p = pieces[fields[mouseZCell][mouseXCell]];
+							deletedPieceId = p->getId();
+							deletedPieceZ = mouseZCell;
+							deletedPieceX = mouseXCell;
 							fields[mouseZCell][mouseXCell] = -1;
+							p->setBeaten(true);
 							if (p->getColor() == 'W') {
-								p->setBeaten(true);
 								p->setZCenter(-3 + (delW / 3));
 								p->setXCenter(6 + delW++ % 3);
 							}
@@ -1269,6 +1278,22 @@ namespace ChessGame {
 			}
 		}
 		else if (currentMode == gameMode) { // режим гри
+			if (editBoardMode) {
+				if (key == 26 && deletedPieceId != -1) {
+					if (pieces[deletedPieceId]->isBeaten() && fields[deletedPieceZ][deletedPieceX] == -1) {
+						fields[deletedPieceZ][deletedPieceX] = deletedPieceId;
+						pieces[deletedPieceId]->setZCenter(deletedPieceZ - 3);
+						pieces[deletedPieceId]->setXCenter(deletedPieceX - 3);
+						pieces[deletedPieceId]->setBeaten(false);
+						if (pieces[deletedPieceId]->getColor() == 'W') {
+							delW--;
+						}
+						else {
+							delB--;
+						}
+					}
+				}
+			}
 			if (promotionMode) { // якщо стоїть режим перетворення пішака
 				switch (key) {
 				case 'q': // якщо натиснута клавіша q
