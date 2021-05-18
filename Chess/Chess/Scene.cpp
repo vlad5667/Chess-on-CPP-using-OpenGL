@@ -717,10 +717,10 @@ namespace ChessGame {
 			mouseX = x;
 			mouseY = y;
 			if (state == GLUT_UP && !promotionMode && !mateOccurredB && !mateOccurredW) { // кнопка віджата
+				findNearest(x, y, mouseXCell, mouseZCell); // Знаходимо координати поля, на яке натиснув гравець
 				// Віджата кнопка була лівою
 				if (button == 0) {
 					downAllPieces();
-					findNearest(x, y, mouseXCell, mouseZCell); // Знаходимо координати поля, на яке натиснув гравець
 					if (editBoardMode) {
 						if (fields[currentZ][currentX] != -1 && (zStart != mouseZCell || xStart != mouseXCell)) {
 							if (mouseZCell != -1 && mouseXCell != -1) {
@@ -729,12 +729,12 @@ namespace ChessGame {
 									if (p1->getColor() != p2->getColor() && typeid(*p2) != typeid(King)) {
 										p2->setBeaten(true);
 										if (p2->getColor() == 'B') {
-											p2->setZCenter(4 - (delW / 3));
-											p2->setXCenter(-5 - delW++ % 3);											
+											p2->setZCenter(4 - (delB / 3));
+											p2->setXCenter(-5 - delB++ % 3);											
 										}
 										else {
-											p2->setZCenter(-3 + (delB / 3));
-											p2->setXCenter(6 + delB++ % 3);
+											p2->setZCenter(-3 + (delW / 3));
+											p2->setXCenter(6 + delW++ % 3);
 										}
 										p1->movePieceToPosition(fields, zTo, xTo, currentZ, currentX);
 									}
@@ -764,13 +764,13 @@ namespace ChessGame {
 								if (typeid(*p) == typeid(Pawn)) {
 									if (enPassantOccurred = static_cast<Pawn*>(p)->isEnPassantOccurred(pieces, fields, prevPieceId, mouseZCell, mouseXCell) && checkW == -1 && checkB == -1) {
 										if (pieces[prevPieceId]->getColor() == 'W') {
-											pieces[prevPieceId]->setZCenter(-3 + (delB / 3));
-											pieces[prevPieceId]->setXCenter(6 + delB++ % 3);
+											pieces[prevPieceId]->setZCenter(-3 + (delW / 3));
+											pieces[prevPieceId]->setXCenter(6 + delW++ % 3);
 											pieces[prevPieceId]->setBeaten(true);
 										}
 										else {
-											pieces[prevPieceId]->setZCenter(4 - (delW / 3));
-											pieces[prevPieceId]->setXCenter(-5 - delW++ % 3);
+											pieces[prevPieceId]->setZCenter(4 - (delB / 3));
+											pieces[prevPieceId]->setXCenter(-5 - delB++ % 3);
 											pieces[prevPieceId]->setBeaten(true);
 										}
 										// Перевіряємо шахи після взяття на проході
@@ -820,8 +820,8 @@ namespace ChessGame {
 												}
 												// Якщо після удару шаху немає, проводимо цей удар
 												else {
-													pieces[fields[mouseZCell][mouseXCell]]->setZCenter(4 - (delW / 3));
-													pieces[fields[mouseZCell][mouseXCell]]->setXCenter(-5 - delW++ % 3);
+													pieces[fields[mouseZCell][mouseXCell]]->setZCenter(4 - (delB / 3));
+													pieces[fields[mouseZCell][mouseXCell]]->setXCenter(-5 - delB++ % 3);
 													pieces[fields[mouseZCell][mouseXCell]]->setBeaten(true);
 													p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
 												}
@@ -866,8 +866,8 @@ namespace ChessGame {
 												}
 												// Якщо після удару шаху немає то проводимо цей удар
 												else {
-													pieces[fields[mouseZCell][mouseXCell]]->setZCenter(-3 + (delB / 3));
-													pieces[fields[mouseZCell][mouseXCell]]->setXCenter(6 + delB++ % 3);
+													pieces[fields[mouseZCell][mouseXCell]]->setZCenter(-3 + (delW / 3));
+													pieces[fields[mouseZCell][mouseXCell]]->setXCenter(6 + delW++ % 3);
 													pieces[fields[mouseZCell][mouseXCell]]->setBeaten(true);
 													p->movePieceToPosition(fields, mouseZCell, mouseXCell, currentZ, currentX);
 												}
@@ -1026,6 +1026,23 @@ namespace ChessGame {
 							else { // Якщо зараз хід чорних, встановлюємо такий ракурс камери
 								angleX = 180;
 								angleY = angleY > 0 ? -angleY : angleY;
+							}
+						}
+					}
+				}
+				else if (button == 2 && editBoardMode) {
+					if (mouseZCell != -1 && mouseXCell != -1) {
+						if (fields[mouseZCell][mouseXCell] != -1 && fields[mouseZCell][mouseXCell] != 4 && fields[mouseZCell][mouseXCell] != 28) {
+							Piece* p = pieces[fields[mouseZCell][mouseXCell]];
+							fields[mouseZCell][mouseXCell] = -1;
+							if (p->getColor() == 'W') {
+								p->setBeaten(true);
+								p->setZCenter(-3 + (delW / 3));
+								p->setXCenter(6 + delW++ % 3);
+							}
+							else {
+								p->setZCenter(4 - (delB / 3));
+								p->setXCenter(-5 - delB++ % 3);
 							}
 						}
 					}
