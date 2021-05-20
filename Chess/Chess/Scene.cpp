@@ -7,7 +7,7 @@
 #include <ctime>
 #include <fstream>
 #include "Scene.h"
-#include "Cube.h"
+#include "Board.h"
 #include "utils.h"
 
 namespace ChessGame {
@@ -24,6 +24,7 @@ namespace ChessGame {
 	bool stalemateOccurredW, stalemateOccurredB; // Змінні, що сигналізують, стався пат чи ні
 	int delW, delB; // Змінні, що задають координату Х для побитих фігур
 	bool editBoardMode; // Змінна, що сигналізує про режим редагування дошки (фігур на дошці)
+	Board* board = new Board();
 
 	void Scene::checkConditions() {
 		for (int i = 0; i < 16; i++) {
@@ -272,27 +273,7 @@ namespace ChessGame {
 			delete pieces[i];
 		}
 		shapes.clear();
-		// Додаємо дошку для шахів
-		for (int i = -3; i < N - 3; i++) {
-			for (int j = -3; j < M - 3; j++) {
-				if (i % 2 != 0) {
-					if (j % 2 == 0) {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffBlack, ambiBlack, specBlack, 0.078125));
-					}
-					else {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffWhite, ambiWhite, specWhite, 0.6));
-					}
-				}
-				else {
-					if (j % 2 != 0) {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffBlack, ambiBlack, specBlack, 0.078125));
-					}
-					else {
-						shapes.push_back(new Cube(j, 0, i, 1, 0.5, 1, diffWhite, ambiWhite, specWhite, 0.6));
-					}
-				}
-			}
-		}
+		shapes.push_back(board);
 		int k = 0;
 		// Додаємо фігури на дошку
 		for (int i = -3; i < N - 3; i++) {
@@ -493,7 +474,7 @@ namespace ChessGame {
 				}
 			}
 			pieces[id]->setFirstMove(false);
-			shapes[64 + id] = pieces[id];
+			shapes[1 + id] = pieces[id];
 			checkB = static_cast<King*>(pieces[4])->isCheckOccurred(pieces, fields);
 			checkW = static_cast<King*>(pieces[28])->isCheckOccurred(pieces, fields);
 			promotionMode = 0;
