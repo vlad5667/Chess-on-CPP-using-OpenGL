@@ -244,7 +244,7 @@ namespace ChessGame {
 		checkW = -1, checkB = -1;
 		mateOccurredW = false, mateOccurredB = false;
 		stalemateOccurredW = false, stalemateOccurredB = false;
-		prevPieceId = -1;
+		prevPieceId = 0;
 		deletedPieceId = -1;
 		deletedPieceZ = -1, deletedPieceX = -1;
 		promotionMode = 0;
@@ -1291,6 +1291,7 @@ namespace ChessGame {
 						else {
 							delB--;
 						}
+						deletedPieceId = -1;
 					}
 				}
 			}

@@ -2,8 +2,5 @@
 EASY
 ------------------------------
 NORMAL
-1 | Vlad-Kerym | winner - Vlad | 1 | 00:05
-2 | Kerym-Vlad | winner - Kerym | 5 | 00:16
-3 | Kerym-Vlad | winner - Kerym | 5 | 00:20
 ------------------------------
 HARD
