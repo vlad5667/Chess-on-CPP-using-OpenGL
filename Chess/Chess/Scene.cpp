@@ -332,12 +332,6 @@ namespace ChessGame {
 			}
 		}
 		resetPieces();
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				std::cout << fields[i][j] << " ";
-			}
-			std::cout << "\n";
-		}
 	}
 	// Переміщення фігури зі вказаної позиції на нову
 	bool Scene::movePiece(int currentZ, int currentX, int zTo, int xTo) {
@@ -357,13 +351,6 @@ namespace ChessGame {
 
 		// Переміщення:
 		pieces[fields[currentZ][currentX]]->movePieceToPosition(fields, zTo, xTo, currentZ, currentX);
-
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				std::cout << fields[i][j] << " ";
-			}
-			std::cout << std::endl;
-		}
 		return true;
 	}
 	//Підняття фігури
