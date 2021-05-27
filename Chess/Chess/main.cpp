@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));
 	glutInit(&argc, argv);
 	scene = new Scene();
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(1920, 1080);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("Chess");
 	glutDisplayFunc(on_paint);

@@ -4,3 +4,4 @@ EASY
 NORMAL
 ------------------------------
 HARD
+1 | Ivan-Vlad | winner - Ivan | 17 | 00:22
